@@ -28,14 +28,6 @@ class _StudyTimetableState extends State<StudyTimetable> {
   // Track current week offset (0 = current week, 1 = next week, etc.)
   // int _currentWeekOffset = 0;
 
-  // Store content for all weeks (week 0, week 1, etc.)
-  //  allWeeksContent = [];
-  //  timeSlots = [
-  //   '08:00 am - 09:00 am',
-  //   '09:00 am - 10:00 am',
-  //   '10:00 am - 11:00 am',
-  // ];
-
   final List<String> categories = [
     "Material",
     "Task",
@@ -249,42 +241,28 @@ class _StudyTimetableState extends State<StudyTimetable> {
     );
   }
 
-  // Future<void> pickTimeAndScheduleNotification(
-  //   String Timeslote,
-  //   BuildContext context,
-  //   String title,
-  //   String body,
-  // ) async {
-  //   if (startTime != null) {
-  //     Notifications().scheduleNotification(
-  //       id: 2,
-  //       title: title,
-  //       body: body,
-  //       hour: startTime!.hour,
-  //       minute: startTime!.minute,
-  //     );
-  //   }
-  // }
-
   Future<void> pickTimeAndScheduleNotification(
-      String timeSlot, BuildContext context, String title, String body) async {
-    // استخراج الجزء الأول من الوقت فقط (مثلاً "08:00 am")
+      String timeSlot, BuildContext context, String title, String body,
+      {required int rowIndex, required int colIndex}) async {
+    // Extract the first time from the time slot
     String rawTime = _extractFirstTime(timeSlot);
 
-    // تحويل النص إلى TimeOfDay
+    // Parse the time
     TimeOfDay? parsedTime = parseTime(rawTime);
 
     if (parsedTime != null) {
-      // جدولة الإشعار
-      Notifications().scheduleNotification(
-        id: DateTime.now().millisecondsSinceEpoch % 1000000000, // ID فريد
+      // Schedule the notification using week, row, column format
+      await Notifications().scheduleNotification(
+        week: currentWeekOffset,
+        row: rowIndex,
+        column: colIndex,
         title: title,
         body: body,
         hour: parsedTime.hour,
         minute: parsedTime.minute,
       );
 
-      // يمكنك إضافة Toast أو SnackBar للتأكيد
+      // Show confirmation
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('تم جدولة الإشعار عند $rawTime')),
       );
@@ -746,6 +724,8 @@ class _StudyTimetableState extends State<StudyTimetable> {
                             context,
                             taskController.text,
                             Descriptioncontroller.text,
+                            rowIndex: rowIndex,
+                            colIndex: colIndex,
                           );
 
                           Map<String, dynamic> notificationInfotoStore = {

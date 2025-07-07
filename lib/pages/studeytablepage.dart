@@ -23,14 +23,8 @@ class _StudeytablepageState extends State<Studeytablepage> {
   late double width;
   String? priority;
 
-  final int _currentWeekOffset = 0; // Track current week offset
+  // Track current week offset
   // Store content for all weeks
-
-  List<String> timeSlots = [
-    '08:00 am - 09:00 am',
-    '09:00 am - 10:00 am',
-    '10:00 am - 11:00 am',
-  ];
 
   final List<String> categories = [
     "Material",
@@ -57,23 +51,23 @@ class _StudeytablepageState extends State<Studeytablepage> {
   }
 
   List<List<Widget>> get _currentWeekContent {
-    while (_currentWeekOffset >= allWeeksContent.length) {
+    while (currentWeekOffset >= allWeeksContent.length) {
       allWeeksContent.add(_createNewWeekContent());
     }
-    return allWeeksContent[_currentWeekOffset];
+    return allWeeksContent[currentWeekOffset];
   }
 
   String _getWeekTitle() {
-    if (_currentWeekOffset == 0) {
+    if (currentWeekOffset == 0) {
       return 'Current Week';
-    } else if (_currentWeekOffset == 1) {
+    } else if (currentWeekOffset == 1) {
       return 'Next Week';
-    } else if (_currentWeekOffset == -1) {
+    } else if (currentWeekOffset == -1) {
       return 'Last Week';
-    } else if (_currentWeekOffset > 1) {
-      return 'In $_currentWeekOffset Weeks';
+    } else if (currentWeekOffset > 1) {
+      return 'In $currentWeekOffset Weeks';
     } else {
-      return '${-_currentWeekOffset} Weeks Ago';
+      return '${-currentWeekOffset} Weeks Ago';
     }
   }
 
@@ -93,19 +87,6 @@ class _StudeytablepageState extends State<Studeytablepage> {
     }
   }
 
-  Future<void> _loadTimeSlots() async {
-    if (!mybox!.isOpen || !mybox!.containsKey('timeSlots')) return;
-    final List<String> savedSlots = mybox!.get('timeSlots');
-    setState(() {
-      timeSlots = savedSlots;
-      for (var weekContent in allWeeksContent) {
-        while (weekContent.length < timeSlots.length) {
-          weekContent.add(List.filled(8, const Text('')));
-        }
-      }
-    });
-  }
-
   String _extractFirstTime(String timeSlot) {
     return timeSlot.split(' - ').first.trim();
   }
@@ -115,11 +96,6 @@ class _StudeytablepageState extends State<Studeytablepage> {
     super.initState();
 
     _initializeWeeksContent();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _loadTimeSlots();
-      // await retriveDateFromhive();
-    });
   }
 
   @override

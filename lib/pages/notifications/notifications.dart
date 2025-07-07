@@ -1,9 +1,13 @@
+import 'package:enhud/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'dart:async';
+import 'package:hive/hive.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:enhud/main.dart';
 
 class Notifications {
   static final Notifications _instance = Notifications._internal();
@@ -80,8 +84,9 @@ class Notifications {
 
     // Handle specific actions
     switch (response.actionId) {
-      case '1':
+      case '1': // Done action
         print('User pressed Done');
+        _markNotificationAsDone(response.payload);
         break;
       case '2':
         print('User pressed Snooze');
@@ -89,6 +94,51 @@ class Notifications {
       default:
         print('Notification tapped (no action)');
         break;
+    }
+  }
+
+  void _markNotificationAsDone(String? payload) {
+    if (payload == null) return;
+
+    try {
+      // Parse the notification ID from the payload
+      int notificationId = int.parse(payload);
+
+      // Extract week, row, and column from the ID
+      int column = notificationId % 10;
+      int row = (notificationId % 100) ~/ 10;
+      int week = notificationId ~/ 100;
+
+      if (!mybox!.isOpen) return;
+
+      var data = mybox!.get('noti');
+      if (data is List) {
+        // Properly cast each item in the list to Map<String, dynamic>
+        List<Map<String, dynamic>> notifications = [];
+
+        for (var item in data) {
+          if (item is Map) {
+            // Convert each map to Map<String, dynamic>
+            notifications.add(Map<String, dynamic>.from(item));
+          }
+        }
+
+        // Find and update the notification with matching week, row, column
+        for (int i = 0; i < notifications.length; i++) {
+          if (notifications[i]['week'] == week &&
+              notifications[i]['row'] == row &&
+              notifications[i]['column'] == column) {
+            notifications[i]['done'] = true;
+            mybox!.put('noti', notifications);
+            notificationItemMap = notifications;
+            print(
+                'Notification marked as done: week=$week, row=$row, column=$column');
+            break;
+          }
+        }
+      }
+    } catch (e) {
+      print('Error marking notification as done: $e');
     }
   }
 
@@ -137,13 +187,18 @@ class Notifications {
   }
 
   Future<void> scheduleNotification({
-    required int id,
+    required int week,
+    required int row,
+    required int column,
     required String title,
     required String body,
     required int hour,
     required int minute,
     String? payload,
   }) async {
+    // Create ID in format: weekrowcolumn (e.g., 123 for week 1, row 2, column 3)
+    int id = (week * 100) + (row * 10) + column;
+
     tz.initializeTimeZones();
     final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(currentTimeZone));
@@ -163,13 +218,11 @@ class Notifications {
       scheduledDate,
       _notificationDetails(),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      // uiLocalNotificationDateInterpretation:
-      //     UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
-      payload: payload,
+      payload: id.toString(), // Pass the ID as payload
     );
 
-    print("Notification scheduled for: $scheduledDate");
+    print("Notification scheduled for: $scheduledDate with ID: $id");
   }
 
   Future<void> cancelNotification(int id) async {
@@ -178,6 +231,13 @@ class Notifications {
 
   Future<void> cancelAllNotifications() async {
     await notificationsPlugin.cancelAll();
+  }
+
+  Future<void> cancelNotificationByPosition(
+      int week, int row, int column) async {
+    int id = (week * 100) + (row * 10) + column;
+    await notificationsPlugin.cancel(id);
+    print("Cancelled notification with ID: $id");
   }
 
   void dispose() {

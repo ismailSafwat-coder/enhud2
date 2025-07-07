@@ -10,24 +10,9 @@ class WeeklyReport extends StatefulWidget {
 }
 
 class _WeeklyReportState extends State<WeeklyReport> {
-  late List<Map<String, dynamic>> noti;
   @override
   initState() {
     super.initState();
-    var data = mybox!.get('noti');
-
-    if (data is List) {
-      noti = List<Map<String, dynamic>>.from(data.map((item) {
-        if (item is Map) {
-          return Map<String, dynamic>.from(item);
-        } else {
-          // Handle unexpected case
-          return {};
-        }
-      }));
-    } else {
-      noti = [];
-    }
   }
 
   @override
@@ -41,11 +26,11 @@ class _WeeklyReportState extends State<WeeklyReport> {
           style: commonTextStyle,
         ),
       ),
-      body: noti.isEmpty
+      body: notificationItemMap.isEmpty
           ? const Center(child: Text("No scudeled subjects yet"))
           : FutureBuilder(
-              future: noti.isNotEmpty
-                  ? Future.value(noti)
+              future: notificationItemMap.isNotEmpty
+                  ? Future.value(notificationItemMap)
                   : Future.error('No data available'),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -65,7 +50,7 @@ class _WeeklyReportState extends State<WeeklyReport> {
                 List<Map<String, dynamic>> notStudedSubjects =
                     data.where((item) => item['done'] == false).toList();
 
-                print("===============noti= $noti");
+                print("===============noti= $notificationItemMap");
                 return SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
