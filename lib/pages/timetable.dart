@@ -506,7 +506,10 @@ class _StudyTimetableState extends State<StudyTimetable> {
             content: const Text('What You Want To Do'),
             actions: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pop(context);
+                  _showAddItemDialog(rowIndex, colIndex);
+                },
                 child: const Text('Edit'),
               ),
               TextButton(
@@ -721,8 +724,8 @@ class _StudyTimetableState extends State<StudyTimetable> {
                             "category": selectedCategory,
                             "done": false,
                             "time": _extractFirstTime(timeSlots[rowIndex]),
-                            selectedCategory == 'task' ? "priority" : _priority:
-                                Null
+                            "priority":
+                                selectedCategory == 'task' ? _priority : null,
                           };
                           storeEoHive(notificationInfotoStore);
                           // Update the current week's content
