@@ -14,6 +14,12 @@ class Studytabletextform extends StatelessWidget {
       child: SizedBox(
         height: 35,
         child: TextFormField(
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Please enter your $hintText";
+            }
+            return null;
+          },
           controller: controller,
           decoration: InputDecoration(
               filled: true,

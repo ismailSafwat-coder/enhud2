@@ -498,6 +498,59 @@ class _StudyTimetableState extends State<StudyTimetable> {
       onTap: () {
         _showAddItemDialog(rowIndex, colIndex);
       },
+      onLongPress: () {
+        //i want to show dilog to delete the item or edit it
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            content: const Text('What You Want To Do'),
+            actions: [
+              TextButton(
+                onPressed: () {},
+                child: const Text('Edit'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  //show dilog to make sure that user want to delte
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      content: const Text(
+                          'are you sure you want to delete this item?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('No'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _currentWeekContent[rowIndex][colIndex] =
+                                  const Text('');
+                            });
+                            notificationItemMap.removeWhere((item) =>
+                                item['row'] == rowIndex &&
+                                item['column'] == colIndex);
+                            //udate hive
+                            mybox!.put('noti', notificationItemMap);
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Yes'),
+                        ),
+                      ],
+                    ),
+                  );
+                  //delete the item
+                },
+                child: const Text('Delete'),
+              ),
+            ],
+          ),
+        );
+      },
       child: Container(
         color: const Color(0xffE4E4E4),
         child: Center(
