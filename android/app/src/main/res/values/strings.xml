@@ -1,0 +1,6 @@
+<resources>
+ <string name="app_name">enhud</string>
+ <string name="facebook_client_token">5e62a0b571bfa766c4194f66f5a61cd7</string>
+    <string name="facebook_app_id">1428327804849038</string>
+    <string name="fb_login_protocol_scheme">c093aceb93df264d6a32c531e4aab053</string>
+</resources>
