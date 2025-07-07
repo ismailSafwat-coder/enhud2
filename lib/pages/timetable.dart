@@ -741,7 +741,7 @@ class _StudyTimetableState extends State<StudyTimetable> {
                             "done": false,
                             "time": _extractFirstTime(timeSlots[rowIndex]),
                             "priority":
-                                selectedCategory == 'task' ? _priority : null,
+                                selectedCategory == 'Task' ? _priority : null,
                           };
                           storeEoHive(notificationInfotoStore);
                           // Update the current week's content
