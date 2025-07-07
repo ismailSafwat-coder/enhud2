@@ -231,7 +231,7 @@ class SettingsScreen extends StatelessWidget {
                   size: 35,
                 ),
                 Text(
-                  '  Logo Out',
+                  '  Log Out',
                   style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500),
                 )
               ],
