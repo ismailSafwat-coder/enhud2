@@ -1,5 +1,7 @@
 import 'package:enhud/main.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class FeedbackPage extends StatefulWidget {
   const FeedbackPage({super.key});
@@ -11,6 +13,76 @@ class FeedbackPage extends StatefulWidget {
 class _FeedbackPageState extends State<FeedbackPage> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   String groupValue = 'Absolutely';
+  final TextEditingController _enjoyController = TextEditingController();
+  final TextEditingController _suggestionsController = TextEditingController();
+  bool _isSubmitting = false;
+
+  @override
+  void dispose() {
+    _enjoyController.dispose();
+    _suggestionsController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submitFeedback() async {
+    if (_enjoyController.text.isEmpty || _suggestionsController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all fields')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      // Get current user ID if logged in
+      String? userId = FirebaseAuth.instance.currentUser?.uid;
+
+      // Create feedback data
+      Map<String, dynamic> feedbackData = {
+        'recommendation': groupValue,
+        'enjoyment': _enjoyController.text,
+        'suggestions': _suggestionsController.text,
+        'userId': userId ?? 'anonymous',
+        'timestamp': FieldValue.serverTimestamp(),
+      };
+
+      // Add to Firestore
+      await FirebaseFirestore.instance
+          .collection('feedback')
+          .doc(userId)
+          .set(feedbackData);
+
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Thank you for your feedback!')),
+        );
+
+        // Clear form
+        _enjoyController.clear();
+        _suggestionsController.clear();
+
+        // Navigate back after successful submission
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      // Show error message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error submitting feedback: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,11 +140,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     children: [
                       // First option
                       RadioListTile<String>(
-                        title: const Text(
-                          'Definitely!',
-                          style: commonTextStyle,
-                        ),
-                        value: "Definitely!",
+                        title: const Text('Absolutely not!'),
+                        value: "Absolutely not!",
                         groupValue: groupValue,
                         activeColor: const Color(0xFF5F8CF8),
                         contentPadding: EdgeInsets.zero,
@@ -83,13 +152,9 @@ class _FeedbackPageState extends State<FeedbackPage> {
                       ),
                       const Divider(height: 1),
                       // Second option
-
                       RadioListTile<String>(
-                        title: const Text(
-                          'Absolutely not!',
-                          style: commonTextStyle,
-                        ),
-                        value: "Absolutely not!",
+                        title: const Text('Definitely!'),
+                        value: "Definitely!",
                         groupValue: groupValue,
                         activeColor: const Color(0xFF5F8CF8),
                         contentPadding: EdgeInsets.zero,
@@ -104,10 +169,11 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 const SizedBox(height: 25),
                 _buildSectionTitle(
                     'What did you enjoy most about the application?'),
-                _buildTextField('Share your experience...'),
+                _buildTextField(_enjoyController, 'Share your experience...'),
                 const SizedBox(height: 25),
                 _buildSectionTitle('Any suggestions or comments?'),
-                _buildTextField('Your feedback helps us improve'),
+                _buildTextField(
+                    _suggestionsController, 'Your feedback helps us improve'),
                 const SizedBox(height: 30),
                 Center(
                   child: Text(
@@ -127,9 +193,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 const SizedBox(height: 30),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Submit logic
-                    },
+                    onPressed: _isSubmitting ? null : _submitFeedback,
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -140,11 +204,20 @@ class _FeedbackPageState extends State<FeedbackPage> {
                           horizontal: 70, vertical: 12),
                       elevation: 3,
                     ),
-                    child: const Text(
-                      'Submit',
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
-                    ),
+                    child: _isSubmitting
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text(
+                            'Submit',
+                            style: TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.w500),
+                          ),
                   ),
                 ),
               ],
@@ -177,7 +250,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
     );
   }
 
-  Widget _buildTextField(String hint) {
+  Widget _buildTextField(TextEditingController controller, String hint) {
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
@@ -189,6 +262,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
         ],
       ),
       child: TextField(
+        controller: controller,
         maxLines: 5,
         decoration: InputDecoration(
           hintText: hint,
