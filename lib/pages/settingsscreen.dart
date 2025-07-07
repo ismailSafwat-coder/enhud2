@@ -1,4 +1,5 @@
 import 'package:enhud/auth/authservices.dart';
+import 'package:enhud/main.dart';
 import 'package:enhud/pages/authpages/loginpage.dart';
 import 'package:enhud/pages/homescreen.dart';
 import 'package:enhud/pages/settings/accountinfo_page.dart';
@@ -200,6 +201,7 @@ class SettingsScreen extends StatelessWidget {
         InkWell(
           onTap: () async {
             Authservices().singout();
+            mybox!.close();
             // Future<void> logoutFromFacebook() async {
             //   await FacebookAuth.instance.logOut();
             //   print("================User logged out from Facebook");

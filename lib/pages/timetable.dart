@@ -128,6 +128,127 @@ class _StudyTimetableState extends State<StudyTimetable> {
     _saveTimeSlots();
   }
 
+  void _showTimeSlotOptions(int index) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Manage Time Slot',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue[800],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              timeSlots[index],
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const Icon(Icons.edit, color: Colors.blue),
+              title: const Text('Edit Time Slot'),
+              onTap: () {
+                Navigator.pop(context);
+                _editTimeSlot(index);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete, color: Colors.red),
+              title: const Text('Delete Time Slot'),
+              onTap: () {
+                Navigator.pop(context);
+                _deleteTimeSlot(index);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _editTimeSlot(int index) async {
+    // Parse current time slot
+    List<String> parts = timeSlots[index].split(' - ');
+    String startStr = parts[0];
+    String endStr = parts[1];
+
+    // Convert to TimeOfDay
+    TimeOfDay? initialStart = parseTime(startStr);
+    TimeOfDay? initialEnd = parseTime(endStr);
+
+    if (initialStart == null || initialEnd == null) {
+      initialStart = TimeOfDay.now();
+      initialEnd =
+          TimeOfDay(hour: initialStart.hour + 1, minute: initialStart.minute);
+    }
+
+    // Get new start time
+    final TimeOfDay? newStart = await showTimePicker(
+      context: context,
+      initialTime: initialStart,
+    );
+
+    if (newStart == null) return;
+
+    // Get new end time
+    final TimeOfDay? newEnd = await showTimePicker(
+      context: context,
+      initialTime: newStart,
+    );
+
+    if (newEnd == null) return;
+
+    // Update time slot
+    setState(() {
+      timeSlots[index] =
+          '${newStart.format(context)} - ${newEnd.format(context)}';
+    });
+
+    _saveTimeSlots();
+  }
+
+  void _deleteTimeSlot(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Time Slot'),
+        content: Text('Are you sure you want to delete "${timeSlots[index]}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            onPressed: () {
+              setState(() {
+                timeSlots.removeAt(index);
+                // Remove corresponding row from all weeks
+                for (var weekContent in allWeeksContent) {
+                  if (index < weekContent.length) {
+                    weekContent.removeAt(index);
+                  }
+                }
+              });
+              _saveTimeSlots();
+              Navigator.pop(context);
+            },
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
   // Future<void> pickTimeAndScheduleNotification(
   //   String Timeslote,
   //   BuildContext context,
@@ -342,7 +463,10 @@ class _StudyTimetableState extends State<StudyTimetable> {
   TableRow _buildTableRow(String time, {required int rowIndex}) {
     return TableRow(
       children: [
-        _buildTableCell(time, isrowheder: true),
+        GestureDetector(
+          onLongPress: () => _showTimeSlotOptions(rowIndex),
+          child: _buildTableCell(time, isrowheder: true),
+        ),
         for (int colIndex = 1; colIndex < 8; colIndex++)
           _buildTableCellWithGesture(rowIndex, colIndex),
       ],
