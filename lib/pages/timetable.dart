@@ -494,61 +494,97 @@ class _StudyTimetableState extends State<StudyTimetable> {
   }
 
   Widget _buildTableCellWithGesture(int rowIndex, int colIndex) {
+    /// Returns true if the cell at [row],[col] is the default empty Text('')
+    bool isCellEmpty(int row, int col) {
+      final widget = _currentWeekContent[row][col];
+      return widget is Text && (widget.data?.trim().isEmpty ?? true);
+    }
+
     return GestureDetector(
       onTap: () {
-        _showAddItemDialog(rowIndex, colIndex);
+        // i wnat to make sure that the cell is empety
+        if (isCellEmpty(rowIndex, colIndex)) {
+          _showAddItemDialog(rowIndex, colIndex);
+        } else {}
       },
       onLongPress: () {
-        //i want to show dilog to delete the item or edit it
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            content: const Text('What You Want To Do'),
+            content: const Text(
+              'What do you want to do?',
+              style: commonTextStyle,
+              textAlign: TextAlign.center,
+            ),
             actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _showAddItemDialog(rowIndex, colIndex);
-                },
-                child: const Text('Edit'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  //show dilog to make sure that user want to delte
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      content: const Text(
-                          'are you sure you want to delete this item?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('No'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _currentWeekContent[rowIndex][colIndex] =
-                                  const Text('');
-                            });
-                            notificationItemMap.removeWhere((item) =>
-                                item['row'] == rowIndex &&
-                                item['column'] == colIndex);
-                            //udate hive
-                            mybox!.put('noti', notificationItemMap);
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Yes'),
-                        ),
-                      ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _showAddItemDialog(rowIndex, colIndex);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
                     ),
-                  );
-                  //delete the item
-                },
-                child: const Text('Delete'),
+                    child: const Text('Edit'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      // Confirmation dialog
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          content: const Text(
+                            textAlign: TextAlign.center,
+                            'Are you sure to Delete this ?!',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          actions: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context); // Cancel delete
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                  ),
+                                  child: const Text('Cancel'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _currentWeekContent[rowIndex][colIndex] =
+                                          const Text('');
+                                    });
+                                    notificationItemMap.removeWhere((item) =>
+                                        item['row'] == rowIndex &&
+                                        item['column'] == colIndex);
+                                    mybox!.put('noti', notificationItemMap);
+                                    Navigator.pop(
+                                        context); // Close confirm dialog
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                  ),
+                                  child: const Text('Ok'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    child: const Text('Delete'),
+                  ),
+                ],
               ),
             ],
           ),
