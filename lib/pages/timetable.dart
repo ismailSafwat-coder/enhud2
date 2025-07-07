@@ -22,7 +22,7 @@ class _StudyTimetableState extends State<StudyTimetable> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late double height;
   late double width;
-  String? _priority;
+  String _priority = "Medium";
   TimeOfDay? startTime;
   int id = DateTime.now().millisecondsSinceEpoch % 1000000000;
   // Track current week offset (0 = current week, 1 = next week, etc.)
@@ -596,7 +596,7 @@ class _StudyTimetableState extends State<StudyTimetable> {
                         taskController: taskController,
                         Descriptioncontroller: Descriptioncontroller,
                         onPriorityChanged: (value) {
-                          setDialogState(() => _priority = value);
+                          setDialogState(() => _priority = value!);
                         })
                   ] else if (selectedCategory == 'Assignment') ...[
                     AssignmentDialog(
@@ -668,6 +668,8 @@ class _StudyTimetableState extends State<StudyTimetable> {
                             "category": selectedCategory,
                             "done": false,
                             "time": _extractFirstTime(timeSlots[rowIndex]),
+                            selectedCategory == 'task' ? "priority" : _priority:
+                                Null
                           };
                           storeEoHive(notificationInfotoStore);
                           // Update the current week's content
