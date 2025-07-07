@@ -282,21 +282,76 @@ class MotivationalMessages extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: messages.map((msg) {
-          return Container(
-            margin: const EdgeInsets.only(right: 12),
-            padding: const EdgeInsets.all(16),
-            width: 100,
-            height: 100,
-            decoration: const BoxDecoration(
-              color: Color(0xFFafcdf8),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                msg,
-                textAlign: TextAlign.center,
-                style:
-                    const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          return InkWell(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  backgroundColor: const Color(0xFFE6F0FF),
+                  title: const Text(
+                    'Motivation',
+                    style: TextStyle(
+                      color: Color(0xFF4A90E2),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  content: Text(
+                    msg,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF333333),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  actions: [
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4A90E2),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 30,
+                            vertical: 10,
+                          ),
+                        ),
+                        child: const Text(
+                          'Got it!',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                  contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
+                  actionsPadding: const EdgeInsets.only(bottom: 16),
+                ),
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.only(right: 12),
+              padding: const EdgeInsets.all(16),
+              width: 100,
+              height: 100,
+              decoration: const BoxDecoration(
+                color: Color(0xFFafcdf8),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  msg,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           );

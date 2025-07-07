@@ -27,7 +27,9 @@ class _TodayscheduleState extends State<Todayschedule> {
     } else {
       noti = [];
     }
-    setState(() {});
+    setState(() {
+      print('noti ====$noti');
+    });
   }
 
   @override
