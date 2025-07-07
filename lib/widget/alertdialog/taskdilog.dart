@@ -1,7 +1,7 @@
 import 'package:enhud/widget/studytabletextform.dart';
 import 'package:flutter/material.dart';
 
-class Taskdilog extends StatelessWidget {
+class Taskdilog extends StatefulWidget {
   final GlobalKey<FormState> formKey;
   final String type;
   final String? priority;
@@ -18,25 +18,30 @@ class Taskdilog extends StatelessWidget {
       required this.type});
 
   @override
+  State<Taskdilog> createState() => _TaskdilogState();
+}
+
+class _TaskdilogState extends State<Taskdilog> {
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Form(
-        key: formKey,
+        key: widget.formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Text('$type Title'),
+                Text('${widget.type} Title'),
                 const SizedBox(
                   width: 10,
                 ),
                 Flexible(
                     child: Studytabletextform(
-                        controller: taskController,
-                        hintText: 'Enter $type Title')),
+                        controller: widget.taskController,
+                        hintText: 'Enter ${widget.type} Title')),
               ],
             ),
             const SizedBox(height: 10),
@@ -48,7 +53,7 @@ class Taskdilog extends StatelessWidget {
                 ),
                 Flexible(
                     child: Studytabletextform(
-                        controller: Descriptioncontroller,
+                        controller: widget.Descriptioncontroller,
                         hintText: 'Enter Description')),
               ],
             ),
@@ -59,25 +64,25 @@ class Taskdilog extends StatelessWidget {
               children: [
                 Radio<String>(
                   value: 'Low',
-                  groupValue: priority,
+                  groupValue: widget.priority,
                   onChanged: (value) {
-                    onPriorityChanged;
+                    widget.onPriorityChanged(value!);
                   },
                 ),
                 const Text('Low'),
                 Radio<String>(
                   value: 'Medium',
-                  groupValue: priority,
+                  groupValue: widget.priority,
                   onChanged: (value) {
-                    onPriorityChanged;
+                    widget.onPriorityChanged(value!);
                   },
                 ),
                 const Text('Medium'),
                 Radio<String>(
                   value: 'High',
-                  groupValue: priority,
+                  groupValue: widget.priority,
                   onChanged: (value) {
-                    onPriorityChanged;
+                    widget.onPriorityChanged(value!);
                   },
                 ),
                 const Text('High'),
