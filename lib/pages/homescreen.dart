@@ -173,17 +173,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
         );
-
-        // Schedule notification if time exists
-        // if (title.isNotEmpty) {
-        //   Notifications().scheduleNotification(
-        //     id: DateTime.now().millisecondsSinceEpoch % 100000,
-        //     title: title,
-        //     body: description,
-        //     hour: time.hour,
-        //     minute: time.minute,
-        //   );
-        // }
       }
 
       setState(() {}); // Update UI after loading all data
