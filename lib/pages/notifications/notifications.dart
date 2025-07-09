@@ -273,7 +273,7 @@ class Notifications {
             daysToAdd = 0;
           } else {
             // Otherwise schedule for next week
-            daysToAdd = 7;
+            // daysToAdd = 7;
           }
         }
       } else if (targetDayOfWeek > now.weekday) {
@@ -304,7 +304,9 @@ class Notifications {
 
     // Double-check that the date is in the future
     if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 7));
+      //show snackbar
+
+      return;
     }
 
     await notificationsPlugin.zonedSchedule(

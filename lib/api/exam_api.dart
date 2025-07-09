@@ -4,8 +4,7 @@ import 'package:http/http.dart' as http;
 import '../models/question.dart';
 
 class ExamApi {
-  static const String _apiUrl =
-      "https://6d24e5e9a4f8.ngrok-free.app/generate-from-file";
+  static const String _apiUrl = "http://74.248.232.4:5000/generate-from-file";
 
   static Future<List<Question>> generateExamFromFile(File file) async {
     try {

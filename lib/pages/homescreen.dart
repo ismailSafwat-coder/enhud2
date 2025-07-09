@@ -8,8 +8,11 @@ import 'package:enhud/pages/studeytablepage.dart';
 import 'package:enhud/pages/timetable.dart';
 import 'package:enhud/screens/0_generation_home_screen.dart';
 import 'package:enhud/utils/app_colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   final int? homeindex;
@@ -65,24 +68,34 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadTimeSlots() async {
-    if (!mybox!.isOpen || !mybox!.containsKey('timeSlots')) return;
+    mybox ??= await openHiveBox(FirebaseAuth.instance.currentUser!.uid);
 
-    final List<String> savedSlots = mybox!.get('timeSlots');
-    setState(() {
-      timeSlots = savedSlots;
-      // Initialize content for all weeks based on loaded time slots
-      for (var weekContent in allWeeksContent) {
-        while (weekContent.length < timeSlots.length) {
-          weekContent.add(List.filled(8, const Text('')));
+    // Then proceed with your existing code, with additional null checks
+    if (mybox != null && mybox!.isOpen) {
+      if (!mybox!.isOpen || !mybox!.containsKey('timeSlots')) return;
+
+      final List<String> savedSlots = mybox!.get('timeSlots');
+      setState(() {
+        timeSlots = savedSlots;
+        // Initialize content for all weeks based on loaded time slots
+        for (var weekContent in allWeeksContent) {
+          while (weekContent.length < timeSlots.length) {
+            weekContent.add(List.filled(8, const Text('')));
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   Future<void> retriveDateFromhive() async {
+    User currentUser = FirebaseAuth.instance.currentUser!;
     try {
       if (!mybox!.isOpen) {
         print('Hive box is not open');
+        //open hive box
+
+        mybox = await openHiveBox(currentUser.uid);
+        print('Hive box is open');
         return;
       }
 
@@ -174,17 +187,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
         );
-
-        // Schedule notification if time exists
-        // if (title.isNotEmpty) {
-        //   Notifications().scheduleNotification(
-        //     id: DateTime.now().millisecondsSinceEpoch % 100000,
-        //     title: title,
-        //     body: description,
-        //     hour: time.hour,
-        //     minute: time.minute,
-        //   );
-        // }
       }
 
       setState(() {}); // Update UI after loading all data

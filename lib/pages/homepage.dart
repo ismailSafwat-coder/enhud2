@@ -290,7 +290,7 @@ class MotivationalMessages extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  backgroundColor: const Color(0xFFE6F0FF),
+                  backgroundColor: const Color(0xFFafcdf8),
                   title: const Text(
                     'Motivation',
                     style: TextStyle(

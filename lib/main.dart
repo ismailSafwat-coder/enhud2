@@ -49,14 +49,17 @@ void main() async {
   // Init notifications
   await Notifications().initNotification();
 
-  // Get current user synchronously
+  // Get current user safely
   User? currentUser = FirebaseAuth.instance.currentUser;
 
+  // Only proceed with user-specific operations if user exists
   if (currentUser != null) {
-    // Open Hive box for current user
-    mybox = await openHiveBox(currentUser.uid);
     print('-------------User is signed in!');
     print('====================${currentUser.uid}');
+    // Open Hive box for current user
+    // mybox = await openHiveBox(currentUser.uid);
+  } else {
+    print('-------------No user signed in');
   }
 
   // Run the app
@@ -107,52 +110,53 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class ExamApp extends StatelessWidget {
-  const ExamApp({super.key});
+// class ExamApp extends StatelessWidget {
+//   const ExamApp({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Exam Generator',
-      theme: ThemeData(
-          primaryColor: AppColors.primary,
-          scaffoldBackgroundColor: AppColors.background,
-          fontFamily: 'Cairo',
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              textStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Cairo'),
-            ),
-          ),
-          outlinedButtonTheme: OutlinedButtonThemeData(
-              style: OutlinedButton.styleFrom(
-            foregroundColor: AppColors.primary,
-            side: const BorderSide(color: AppColors.primary),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            textStyle: const TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
-          )),
-          appBarTheme: const AppBarTheme(
-              backgroundColor: AppColors.background,
-              elevation: 0,
-              centerTitle: true,
-              iconTheme: IconThemeData(color: AppColors.textDark),
-              titleTextStyle: TextStyle(
-                  color: AppColors.textDark,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Cairo'))),
-      home: const GenerationHomeScreen(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Exam Generator',
+//       theme: ThemeData(
+//           primaryColor: AppColors.primary,
+//           scaffoldBackgroundColor: AppColors.background,
+//           fontFamily: 'Cairo',
+//           elevatedButtonTheme: ElevatedButtonThemeData(
+//             style: ElevatedButton.styleFrom(
+//               backgroundColor: AppColors.primary,
+//               foregroundColor: Colors.white,
+//               shape: RoundedRectangleBorder(
+//                   borderRadius: BorderRadius.circular(12)),
+//               padding: const EdgeInsets.symmetric(vertical: 14),
+//               textStyle: const TextStyle(
+//                   fontSize: 16,
+//                   fontWeight: FontWeight.bold,
+//                   fontFamily: 'Cairo'),
+//             ),
+//           ),
+//           outlinedButtonTheme: OutlinedButtonThemeData(
+//               style: OutlinedButton.styleFrom(
+//             foregroundColor: AppColors.primary,
+//             side: const BorderSide(color: AppColors.primary),
+//             shape:
+//                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+//             padding: const EdgeInsets.symmetric(vertical: 14),
+//             textStyle: const TextStyle(
+//                 fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+//           )),
+//           appBarTheme: const AppBarTheme(
+//               backgroundColor: AppColors.background,
+//               elevation: 0,
+//               centerTitle: true,
+//               iconTheme: IconThemeData(color: AppColors.textDark),
+//               titleTextStyle: TextStyle(
+//                   color: AppColors.textDark,
+//                   fontSize: 20,
+//                   fontWeight: FontWeight.bold,
+//                   fontFamily: 'Cairo'))),
+//       home: const GenerationHomeScreen(),
+//       debugShowCheckedModeBanner: false,
+//     );
+//   }
+// }
+

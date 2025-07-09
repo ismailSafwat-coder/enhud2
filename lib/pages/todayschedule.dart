@@ -13,20 +13,6 @@ class _TodayscheduleState extends State<Todayschedule> {
   @override
   void initState() {
     super.initState();
-    var data = mybox!.get('noti');
-
-    if (data is List) {
-      notificationItemMap = List<Map<String, dynamic>>.from(data.map((item) {
-        if (item is Map) {
-          return Map<String, dynamic>.from(item);
-        } else {
-          // يمكنك هنا التعامل مع الحالة الغير متوقعة
-          return {};
-        }
-      }));
-    } else {
-      notificationItemMap = [];
-    }
   }
 
   @override
