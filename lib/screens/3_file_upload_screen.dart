@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:enhud/utils/app_colors.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import '4_exam_loading_screen.dart';
@@ -8,12 +9,11 @@ class FileUploadScreen extends StatefulWidget {
   final String scope;
   final bool isExamMode;
 
-  const FileUploadScreen({
-    super.key, 
-    required this.material, 
-    required this.scope,
-    required this.isExamMode
-  });
+  const FileUploadScreen(
+      {super.key,
+      required this.material,
+      required this.scope,
+      required this.isExamMode});
 
   @override
   State<FileUploadScreen> createState() => _FileUploadScreenState();
@@ -47,7 +47,8 @@ class _FileUploadScreenState extends State<FileUploadScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(Icons.upload_file_rounded, size: 100, color: Colors.grey),
+                  const Icon(Icons.upload_file_rounded,
+                      size: 100, color: Colors.grey),
                   const SizedBox(height: 20),
                   const Text(
                     "Please upload the relevant PDF or TXT file for the selected unit.",
@@ -57,7 +58,8 @@ class _FileUploadScreenState extends State<FileUploadScreen> {
                   const SizedBox(height: 30),
                   OutlinedButton.icon(
                     icon: const Icon(Icons.attach_file),
-                    label: Text(_selectedFile == null ? 'Choose File' : 'Change File'),
+                    label: Text(
+                        _selectedFile == null ? 'Choose File' : 'Change File'),
                     onPressed: _pickFile,
                   ),
                   if (_selectedFile != null)
@@ -74,21 +76,48 @@ class _FileUploadScreenState extends State<FileUploadScreen> {
             ),
             Row(
               children: [
-                Expanded(child: OutlinedButton(onPressed: () => Navigator.pop(context), child: const Text("Back"))),
+                Expanded(
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          textStyle: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Cairo'),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Back"))),
                 const SizedBox(width: 15),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: _selectedFile == null ? null : () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ExamLoadingScreen(
-                            file: _selectedFile!,
-                            isExamMode: widget.isExamMode,
-                          ),
-                        ),
-                      );
-                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _selectedFile == null
+                          ? Colors.grey.shade300
+                          : AppColors.primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Cairo'),
+                    ),
+                    onPressed: _selectedFile == null
+                        ? null
+                        : () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ExamLoadingScreen(
+                                  file: _selectedFile!,
+                                  isExamMode: widget.isExamMode,
+                                ),
+                              ),
+                            );
+                          },
                     child: const Text("Next"),
                   ),
                 ),

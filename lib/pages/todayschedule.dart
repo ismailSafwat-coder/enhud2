@@ -13,23 +13,25 @@ class _TodayscheduleState extends State<Todayschedule> {
   List<Map<String, dynamic>> noti = [];
 
   loaddata() async {
-    var data = await mybox!.get('noti');
+    if (!mybox!.isOpen) {
+      var data = await mybox!.get('noti');
 
-    if (data is List) {
-      noti = List<Map<String, dynamic>>.from(data.map((item) {
-        if (item is Map) {
-          return Map<String, dynamic>.from(item);
-        } else {
-          // يمكنك هنا التعامل مع الحالة الغير متوقعة
-          return {};
-        }
-      }));
-    } else {
-      noti = [];
+      if (data is List) {
+        noti = List<Map<String, dynamic>>.from(data.map((item) {
+          if (item is Map) {
+            return Map<String, dynamic>.from(item);
+          } else {
+            // يمكنك هنا التعامل مع الحالة الغير متوقعة
+            return {};
+          }
+        }));
+      } else {
+        noti = [];
+      }
+      setState(() {
+        print('noti ====$noti');
+      });
     }
-    setState(() {
-      print('noti ====$noti');
-    });
   }
 
   @override

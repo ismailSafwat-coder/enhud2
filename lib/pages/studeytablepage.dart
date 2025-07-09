@@ -1,6 +1,7 @@
 // ... (keep your existing imports)
 import 'package:enhud/core/core.dart';
 import 'package:enhud/main.dart';
+import 'package:enhud/utils/app_colors.dart';
 
 import 'package:flutter/material.dart';
 
@@ -187,7 +188,7 @@ class _StudeytablepageState extends State<Studeytablepage> {
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
-                      color: Colors.blue,
+                      color: AppColors.primary,
                     ),
                     height: height * 0.02,
                     width: height * 0.02,

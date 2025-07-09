@@ -1,3 +1,4 @@
+import 'package:enhud/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ExamNavigation extends StatelessWidget {
@@ -31,13 +32,19 @@ class ExamNavigation extends StatelessWidget {
               child: const Text("Previous"),
             ),
           ),
-        if (!isFirstPage && !isReviewPage)
-          const SizedBox(width: 15),
+        if (!isFirstPage && !isReviewPage) const SizedBox(width: 15),
         Expanded(
           child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+                  isReviewPage ? AppColors.primary : AppColors.primary,
+            ),
             onPressed: isReviewPage ? onSubmit : onNext,
             child: Text(
-              isLastQuestionPage ? "Review" : (isReviewPage ? "Submit" : "Next"),
+              isLastQuestionPage
+                  ? "Review"
+                  : (isReviewPage ? "Submit" : "Next"),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ),

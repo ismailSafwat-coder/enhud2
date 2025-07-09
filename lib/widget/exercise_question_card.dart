@@ -37,8 +37,12 @@ class ExerciseQuestionCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Question ${questionIndex + 1} of $totalQuestions', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                const Text('1 point', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                Text('Question ${questionIndex + 1} of $totalQuestions',
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold)),
+                const Text('1 point',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold)),
               ],
             ),
           ),
@@ -46,12 +50,20 @@ class ExerciseQuestionCard extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                Text(question.text, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                Text(question.text,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 16),
-                ...question.choices.map((choice) => _buildChoiceTile(choice)).toList(),
+                ...question.choices.map((choice) => _buildChoiceTile(choice)),
                 const SizedBox(height: 20),
                 if (!isAnswerShown)
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: selectedAnswer == null
+                          ? Colors.grey.shade300
+                          : AppColors.primary,
+                      foregroundColor: Colors.white,
+                    ),
                     onPressed: selectedAnswer == null ? null : onShowAnswer,
                     child: const Text("Show Answer"),
                   )
@@ -89,7 +101,10 @@ class ExerciseQuestionCard extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: tileColor,
-          border: Border.all(color: isSelected && !isAnswerShown ? AppColors.primary : Colors.grey.shade300),
+          border: Border.all(
+              color: isSelected && !isAnswerShown
+                  ? AppColors.primary
+                  : Colors.grey.shade300),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -97,7 +112,8 @@ class ExerciseQuestionCard extends StatelessWidget {
             Radio<String>(
               value: choice,
               groupValue: selectedAnswer,
-              onChanged: isAnswerShown ? null : (value) => onAnswerSelected(value!),
+              onChanged:
+                  isAnswerShown ? null : (value) => onAnswerSelected(value!),
               activeColor: AppColors.primary,
             ),
             Expanded(child: Text(choice)),

@@ -9,7 +9,8 @@ class ExamLoadingScreen extends StatefulWidget {
   final File file;
   final bool isExamMode;
 
-  const ExamLoadingScreen({super.key, required this.file, required this.isExamMode});
+  const ExamLoadingScreen(
+      {super.key, required this.file, required this.isExamMode});
 
   @override
   State<ExamLoadingScreen> createState() => _ExamLoadingScreenState();
@@ -19,7 +20,8 @@ class _ExamLoadingScreenState extends State<ExamLoadingScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _showInstructionsAndLoad());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _showInstructionsAndLoad());
   }
 
   Future<void> _showInstructionsAndLoad() async {
@@ -44,12 +46,14 @@ class _ExamLoadingScreenState extends State<ExamLoadingScreen> {
       if (widget.isExamMode) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => ExamTakingScreen(questions: questions)),
+          MaterialPageRoute(
+              builder: (_) => ExamTakingScreen(questions: questions)),
         );
       } else {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => ExercisesScreen(questions: questions)),
+          MaterialPageRoute(
+              builder: (_) => ExercisesScreen(questions: questions)),
         );
       }
     } catch (e) {
@@ -93,27 +97,29 @@ class InstructionsDialog extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade200)
-            ),
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade200)),
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                 Text("Instructions for this Exam", textAlign: TextAlign.center, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                 SizedBox(height: 16),
-                 Text("• Number of questions: 10"),
-                 SizedBox(height: 8),
-                 Text("• Has a time limit of: 00:10:00"),
-                 SizedBox(height: 8),
-                 Text("• Attempts allowed: Unlimited"),
-                 SizedBox(height: 8),
-                 Text("• Has a passmark of: 60%"),
-                 SizedBox(height: 8),
-                 Text("• Must be finished in one sitting."),
-                 SizedBox(height: 8),
-                 Text("• You can go back and change your answers."),
+                Text("Instructions for this Exam",
+                    textAlign: TextAlign.center,
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                SizedBox(height: 16),
+                Text("• Number of questions: 10"),
+                SizedBox(height: 8),
+                Text("• Has a time limit of: 00:10:00"),
+                SizedBox(height: 8),
+                Text("• Attempts allowed: Unlimited"),
+                SizedBox(height: 8),
+                Text("• Has a passmark of: 60%"),
+                SizedBox(height: 8),
+                Text("• Must be finished in one sitting."),
+                SizedBox(height: 8),
+                Text("• You can go back and change your answers."),
               ],
             ),
           ),

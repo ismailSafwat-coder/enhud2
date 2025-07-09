@@ -1,3 +1,4 @@
+import 'package:enhud/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import '2_scope_selection_screen.dart';
 
@@ -6,13 +7,21 @@ class MaterialSelectionScreen extends StatefulWidget {
   const MaterialSelectionScreen({super.key, required this.isExamMode});
 
   @override
-  State<MaterialSelectionScreen> createState() => _MaterialSelectionScreenState();
+  State<MaterialSelectionScreen> createState() =>
+      _MaterialSelectionScreenState();
 }
 
 class _MaterialSelectionScreenState extends State<MaterialSelectionScreen> {
   String? _selectedMaterial;
   final List<String> materials = [
-    "Arabic", "Math", "English", "French", "Physics", "Chemistry", "Biology", "Programming"
+    "Arabic",
+    "Math",
+    "English",
+    "French",
+    "Physics",
+    "Chemistry",
+    "Biology",
+    "Programming"
   ];
 
   @override
@@ -39,9 +48,12 @@ class _MaterialSelectionScreenState extends State<MaterialSelectionScreen> {
                     onTap: () => setState(() => _selectedMaterial = material),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: isSelected ? Theme.of(context).primaryColor : Colors.white,
+                        color: isSelected ? AppColors.primary : Colors.white,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: isSelected ? Colors.transparent : Colors.grey.shade300),
+                        border: Border.all(
+                            color: isSelected
+                                ? AppColors.primary
+                                : Colors.grey.shade300),
                       ),
                       child: Center(
                         child: Text(
@@ -62,18 +74,47 @@ class _MaterialSelectionScreenState extends State<MaterialSelectionScreen> {
               padding: const EdgeInsets.only(top: 16.0),
               child: Row(
                 children: [
-                  Expanded(child: OutlinedButton(onPressed: () => Navigator.pop(context), child: const Text("Back"))),
+                  Expanded(
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            textStyle: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Cairo'),
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("Back"))),
                   const SizedBox(width: 15),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: _selectedMaterial == null ? null : () {
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => ScopeSelectionScreen(
-                            material: _selectedMaterial!,
-                            isExamMode: widget.isExamMode,
-                          ),
-                        ));
-                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _selectedMaterial == null
+                            ? Colors.grey.shade300
+                            : AppColors.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        textStyle: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Cairo'),
+                      ),
+                      onPressed: _selectedMaterial == null
+                          ? null
+                          : () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ScopeSelectionScreen(
+                                      material: _selectedMaterial!,
+                                      isExamMode: widget.isExamMode,
+                                    ),
+                                  ));
+                            },
                       child: const Text("Next"),
                     ),
                   ),

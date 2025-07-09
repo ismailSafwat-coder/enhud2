@@ -199,16 +199,95 @@ class Notifications {
     // Create ID in format: weekrowcolumn (e.g., 123 for week 1, row 2, column 3)
     int id = (week * 100) + (row * 10) + column;
 
+    // Initialize timezone database
     tz.initializeTimeZones();
-    final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(currentTimeZone));
+    final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
 
+    // Get the current date and time in local timezone
     final now = tz.TZDateTime.now(tz.local);
-    var scheduledDate =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
 
+    // Map column index to day of week (1-7 where 1 is Monday, 7 is Sunday)
+    int targetDayOfWeek;
+
+    // This mapping assumes:
+    // Column 0 = Time column (not a day)
+    // Column 1 = Saturday
+    // Column 2 = Sunday
+    // Column 3 = Monday
+    // Column 4 = Tuesday
+    // Column 5 = Wednesday
+    // Column 6 = Thursday
+    // Column 7 = Friday
+    switch (column) {
+      case 1:
+        targetDayOfWeek = 6;
+        break; // Saturday
+      case 2:
+        targetDayOfWeek = 7;
+        break; // Sunday
+      case 3:
+        targetDayOfWeek = 1;
+        break; // Monday
+      case 4:
+        targetDayOfWeek = 2;
+        break; // Tuesday
+      case 5:
+        targetDayOfWeek = 3;
+        break; // Wednesday
+      case 6:
+        targetDayOfWeek = 4;
+        break; // Thursday
+      case 7:
+        targetDayOfWeek = 5;
+        break; // Friday
+      default:
+        targetDayOfWeek = column; // Fallback
+    }
+
+    // Calculate days to add
+    int daysToAdd = 0;
+
+    if (week == 0) {
+      // For current week
+      if (targetDayOfWeek == now.weekday) {
+        // Same day - check time
+        if (hour > now.hour || (hour == now.hour && minute > now.minute)) {
+          // Later today
+          daysToAdd = 0;
+        } else {
+          // Earlier today or now - schedule for next week
+          daysToAdd = 7;
+        }
+      } else if (targetDayOfWeek > now.weekday) {
+        // Later this week
+        daysToAdd = targetDayOfWeek - now.weekday;
+      } else {
+        // Earlier this week (already passed) - schedule for next week
+        daysToAdd = 7 + (targetDayOfWeek - now.weekday);
+      }
+    } else {
+      // For future weeks
+      if (targetDayOfWeek >= now.weekday) {
+        daysToAdd = targetDayOfWeek - now.weekday + (week * 7);
+      } else {
+        daysToAdd = (targetDayOfWeek - now.weekday + 7) + (week * 7);
+      }
+    }
+
+    // Create the scheduled date
+    var scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day + daysToAdd,
+      hour,
+      minute,
+    );
+
+    // Double-check that the date is in the future
     if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
+      scheduledDate = scheduledDate.add(const Duration(days: 7));
     }
 
     await notificationsPlugin.zonedSchedule(
@@ -217,8 +296,7 @@ class Notifications {
       body,
       scheduledDate,
       _notificationDetails(),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       payload: id.toString(), // Pass the ID as payload
     );
 

@@ -7,6 +7,7 @@ import 'package:enhud/pages/settingsscreen.dart';
 import 'package:enhud/pages/studeytablepage.dart';
 import 'package:enhud/pages/timetable.dart';
 import 'package:enhud/screens/0_generation_home_screen.dart';
+import 'package:enhud/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -304,7 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 9,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Color(0xFF5f8cf8),
+                        color: AppColors.primary,
                       ),
                     ),
                 ],

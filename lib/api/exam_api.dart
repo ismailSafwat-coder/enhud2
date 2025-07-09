@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 import '../models/question.dart';
 
 class ExamApi {
-  static const String _apiUrl = "https://2242-217-53-113-242.ngrok-free.app";
+  static const String _apiUrl =
+      "https://6d24e5e9a4f8.ngrok-free.app/generate-from-file";
 
   static Future<List<Question>> generateExamFromFile(File file) async {
     try {
@@ -19,17 +20,20 @@ class ExamApi {
         final data = json.decode(responseBody);
         final List<dynamic> examData = data['exam'];
         if (examData.isEmpty) {
-          throw Exception("The server returned an empty exam. Please check the file content.");
+          throw Exception(
+              "The server returned an empty exam. Please check the file content.");
         }
         return examData.map((jsonData) => Question.fromJson(jsonData)).toList();
       } else {
         final errorBody = await response.stream.bytesToString();
-        final errorMessage = json.decode(errorBody)['error'] ?? 'Unknown server error';
+        final errorMessage =
+            json.decode(errorBody)['error'] ?? 'Unknown server error';
         throw Exception('Failed to generate exam: $errorMessage');
       }
     } catch (e) {
       // Catch network errors or other exceptions
-      throw Exception('Could not connect to the server. Please check your network connection and try again.');
+      throw Exception(
+          'Could not connect to the server. Please check your network connection and try again.');
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:enhud/utils/app_colors.dart';
 import 'package:enhud/widget/exam_header.dart';
 import 'package:enhud/widget/exam_navigation.dart';
 import 'package:enhud/widget/pre_submission_review_page.dart';
@@ -129,7 +130,7 @@ class _ExamTakingScreenState extends State<ExamTakingScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: _currentPage == index
-                          ? Theme.of(context).primaryColor
+                          ? AppColors.primary
                           : Colors.grey.shade400,
                     ),
                   ),

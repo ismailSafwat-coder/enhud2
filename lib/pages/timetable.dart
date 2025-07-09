@@ -264,7 +264,9 @@ class _StudyTimetableState extends State<StudyTimetable> {
 
       // Show confirmation
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('تم جدولة الإشعار عند $rawTime')),
+        SnackBar(
+            content: Text(
+                'تم جدولة الإشعار ليوم ${_getDayName(colIndex)} عند $rawTime')),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -835,5 +837,28 @@ class _StudyTimetableState extends State<StudyTimetable> {
         ),
       ),
     );
+  }
+
+  // Helper method to get day name from column index
+  String _getDayName(int colIndex) {
+    // This mapping should match the one in scheduleNotification
+    switch (colIndex) {
+      case 1:
+        return 'السبت'; // Saturday
+      case 2:
+        return 'الأحد'; // Sunday
+      case 3:
+        return 'الاثنين'; // Monday
+      case 4:
+        return 'الثلاثاء'; // Tuesday
+      case 5:
+        return 'الأربعاء'; // Wednesday
+      case 6:
+        return 'الخميس'; // Thursday
+      case 7:
+        return 'الجمعة'; // Friday
+      default:
+        return 'يوم غير معروف';
+    }
   }
 }
