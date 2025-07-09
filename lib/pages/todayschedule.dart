@@ -10,40 +10,28 @@ class Todayschedule extends StatefulWidget {
 }
 
 class _TodayscheduleState extends State<Todayschedule> {
-  List<Map<String, dynamic>> noti = [];
+  @override
+  void initState() {
+    super.initState();
+    var data = mybox!.get('noti');
 
-  loaddata() async {
-    if (!mybox!.isOpen) {
-      var data = await mybox!.get('noti');
-
-      if (data is List) {
-        noti = List<Map<String, dynamic>>.from(data.map((item) {
-          if (item is Map) {
-            return Map<String, dynamic>.from(item);
-          } else {
-            // يمكنك هنا التعامل مع الحالة الغير متوقعة
-            return {};
-          }
-        }));
-      } else {
-        noti = [];
-      }
-      setState(() {
-        print('noti ====$noti');
-      });
+    if (data is List) {
+      notificationItemMap = List<Map<String, dynamic>>.from(data.map((item) {
+        if (item is Map) {
+          return Map<String, dynamic>.from(item);
+        } else {
+          // يمكنك هنا التعامل مع الحالة الغير متوقعة
+          return {};
+        }
+      }));
+    } else {
+      notificationItemMap = [];
     }
   }
 
   @override
-  void initState() {
-    super.initState();
-
-    loaddata();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return noti.isEmpty
+    return notificationItemMap.isEmpty
         ? const Center(
             child: Text(
               'there is no schedule today',
@@ -77,14 +65,14 @@ class _TodayscheduleState extends State<Todayschedule> {
                       height: 250,
                       child: ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: noti.length,
+                          itemCount: notificationItemMap.length,
                           padding: const EdgeInsets.all(16),
                           itemBuilder: (context, index) {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 //text
-                                mycard(noti, index),
+                                mycard(notificationItemMap, index),
                                 //listview card
                               ],
                             );

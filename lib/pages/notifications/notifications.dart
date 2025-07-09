@@ -256,8 +256,25 @@ class Notifications {
           // Later today
           daysToAdd = 0;
         } else {
-          // Earlier today or now - schedule for next week
-          daysToAdd = 7;
+          // If it's just a few minutes in the past, still schedule for today
+          // but add a small buffer (e.g., schedule for 2 minutes from now)
+          DateTime scheduledTime =
+              DateTime(now.year, now.month, now.day, hour, minute);
+          DateTime currentTime = DateTime.now();
+
+          if (currentTime.difference(scheduledTime).inMinutes < 5) {
+            // If less than 5 minutes in the past, schedule for a few minutes from now
+            hour = now.hour;
+            minute = now.minute + 2; // Add 2 minutes buffer
+            if (minute >= 60) {
+              hour += 1;
+              minute -= 60;
+            }
+            daysToAdd = 0;
+          } else {
+            // Otherwise schedule for next week
+            daysToAdd = 7;
+          }
         }
       } else if (targetDayOfWeek > now.weekday) {
         // Later this week
