@@ -30,7 +30,9 @@ class _WeeklyReportState extends State<WeeklyReport> {
           ? const Center(child: Text("No scudeled subjects yet"))
           : FutureBuilder(
               future: notificationItemMap.isNotEmpty
-                  ? Future.value(notificationItemMap)
+                  ? Future.value(notificationItemMap
+                      .where((item) => item['week'] == currentWeekOffset)
+                      .toList())
                   : Future.error('No data available'),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {

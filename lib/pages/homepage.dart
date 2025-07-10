@@ -1,5 +1,5 @@
 import 'package:enhud/core/core.dart';
-import 'package:enhud/pages/messages.dart';
+import 'package:enhud/pages/WeeklyReport.dart';
 import 'package:enhud/pages/notificationscreen.dart';
 import 'package:enhud/pages/settings/accountinfo_page.dart';
 import 'package:enhud/pages/settings/notification.dart';

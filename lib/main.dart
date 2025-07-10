@@ -76,6 +76,7 @@ void main() async {
 
     // Set the global currentWeekOffset from Hive
     currentWeekOffset = mybox!.get('currentWeekOffset') ?? 0;
+    print(currentWeekOffset);
   } else {
     print('-------------No user signed in');
   }
