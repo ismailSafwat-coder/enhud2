@@ -41,9 +41,22 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _loadTimeSlots();
       await retriveDateFromhive();
+      await _loadCurrentWeekOffset();
     });
 
     super.initState();
+  }
+
+  Future<void> _loadCurrentWeekOffset() async {
+    if (mybox != null &&
+        mybox!.isOpen &&
+        mybox!.containsKey('currentWeekOffset')) {
+      setState(() {
+        currentWeekOffset = mybox!.get('currentWeekOffset');
+      });
+    } else {
+      currentWeekOffset = 0;
+    }
   }
 
   List<List<Widget>> _createNewWeekContent() {

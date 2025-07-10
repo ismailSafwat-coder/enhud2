@@ -91,6 +91,12 @@ class _StudyTimetableState extends State<StudyTimetable> {
     mybox = await openHiveBox(FirebaseAuth.instance.currentUser!.uid);
   }
 
+  openweekstart() async {
+    // Store initial week data
+    await mybox!.put('weekStartDate', DateTime.now().millisecondsSinceEpoch);
+    await mybox!.put('currentWeekOffset', 0);
+  }
+
   String _getWeekTitle() {
     //open box if not open
     if (mybox == null || !mybox!.isOpen) {
@@ -98,6 +104,10 @@ class _StudyTimetableState extends State<StudyTimetable> {
       return 'Current Week'; // Default if box isn't available
     }
     // Get the current weeksPassed value
+    if (!mybox!.containsKey('weekStartDate')) {
+      // Store initial week data
+      openweekstart();
+    }
     int startDateMillis = mybox!.get('weekStartDate');
     DateTime startDate = DateTime.fromMillisecondsSinceEpoch(startDateMillis);
     DateTime now = DateTime.now();
