@@ -24,6 +24,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     "freetime": "",
     "Another Class": ""
   };
+  List<Map<String, dynamic>> pastNotifications = [];
 
   @override
   void initState() {
@@ -35,13 +36,107 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         if (item is Map) {
           return Map<String, dynamic>.from(item);
         } else {
-          // يمكنك هنا التعامل مع الحالة الغير متوقعة
           return {};
         }
       }));
+
+      // Filter for past notifications
+      filterPastNotifications();
     } else {
       notificationItemMap = [];
+      pastNotifications = [];
     }
+  }
+
+  void filterPastNotifications() {
+    DateTime now = DateTime.now();
+
+    pastNotifications = notificationItemMap.where((notification) {
+      // Extract time from notification
+      String? timeString = notification['time'];
+      if (timeString == null) return false;
+
+      // Parse the time
+      TimeOfDay? notificationTime = _parseTimeString(timeString);
+      if (notificationTime == null) return false;
+
+      // Get notification date based on week and column (day)
+      DateTime notificationDateTime = _getNotificationDateTime(
+          notification['week'] ?? 0,
+          notification['column'] ?? 0,
+          notificationTime);
+
+      // Check if notification is in the past
+      return notificationDateTime.isBefore(now);
+    }).toList();
+  }
+
+  TimeOfDay? _parseTimeString(String timeString) {
+    // Handle formats like "08:00 am"
+    try {
+      RegExp timeRegex =
+          RegExp(r'(\d+):(\d+)\s*(am|pm)?', caseSensitive: false);
+      var match = timeRegex.firstMatch(timeString);
+
+      if (match != null) {
+        int hour = int.parse(match.group(1)!);
+        int minute = int.parse(match.group(2)!);
+        String? ampm = match.group(3)?.toLowerCase();
+
+        if (ampm == 'pm' && hour < 12) hour += 12;
+        if (ampm == 'am' && hour == 12) hour = 0;
+
+        return TimeOfDay(hour: hour, minute: minute);
+      }
+    } catch (e) {
+      print('Error parsing time: $e');
+    }
+    return null;
+  }
+
+  DateTime _getNotificationDateTime(int week, int column, TimeOfDay time) {
+    DateTime now = DateTime.now();
+
+    // Map column to weekday (1-7)
+    Map<int, int> columnToWeekday = {
+      1: 1, // Monday
+      2: 2, // Tuesday
+      3: 3, // Wednesday
+      4: 4, // Thursday
+      5: 5, // Friday
+      6: 6, // Saturday
+      7: 7, // Sunday
+    };
+
+    int targetWeekday = columnToWeekday[column] ?? now.weekday;
+    int daysToAdd = 0;
+
+    if (week == 0) {
+      // Current week
+      if (targetWeekday == now.weekday) {
+        // Same day - no days to add
+        daysToAdd = 0;
+      } else if (targetWeekday > now.weekday) {
+        // Later this week
+        daysToAdd = targetWeekday - now.weekday;
+      } else {
+        // Earlier this week
+        daysToAdd = targetWeekday - now.weekday;
+      }
+    } else {
+      // Future weeks
+      daysToAdd = (targetWeekday - now.weekday) + (week * 7);
+    }
+
+    DateTime notificationDate = DateTime(
+      now.year,
+      now.month,
+      now.day + daysToAdd,
+      time.hour,
+      time.minute,
+    );
+
+    return notificationDate;
   }
 
   @override
@@ -55,18 +150,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           children: [
             Icon(Icons.notifications, color: Colors.black),
             SizedBox(width: 8),
-            Text("Notifications", style: TextStyle(color: Colors.black)),
+            Text("Past Notifications", style: TextStyle(color: Colors.black)),
           ],
         ),
       ),
-      body: notificationItemMap.isEmpty
-          ? const Center(child: Text("No notifications yet"))
+      body: pastNotifications.isEmpty
+          ? const Center(child: Text("No past notifications"))
           : ListView.builder(
               padding: const EdgeInsets.all(16),
-              itemCount: notificationItemMap.length,
+              itemCount: pastNotifications.length,
               itemBuilder: (context, index) {
                 return NotificationCard(
-                    notification: notificationItemMap[index],
+                    notification: pastNotifications[index],
                     noti: notificationItemMap);
               },
             ),
