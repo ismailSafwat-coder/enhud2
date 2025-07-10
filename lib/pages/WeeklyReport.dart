@@ -194,50 +194,50 @@ class _WeeklyReportState extends State<WeeklyReport> {
                         const SizedBox(
                           height: 18,
                         ),
-                        const Text(
-                            textAlign: TextAlign.center,
-                            style: midTextStyle,
-                            'Based on your availability, we have some suggestions for when you could study the subjects you missed this week.'),
+                        // const Text(
+                        //     textAlign: TextAlign.center,
+                        //     style: midTextStyle,
+                        //     'Based on your availability, we have some suggestions for when you could study the subjects you missed this week.'),
 
-                        //suggested stydey times
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        const Text(
-                          'Suggested Study Times',
-                          style: commonTextStyle,
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        //stydey times
-                        Container(
-                          margin: const EdgeInsets.all(6),
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: const Color(0xFFe6e6e6))),
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                'images/calenderweeklyreport.png',
-                                height: 50,
-                                width: 60,
-                              ),
-                              const Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Today',
-                                    style: midTextStyle,
-                                  ),
-                                  Text('Biology'),
-                                  Text('4:00 PM - 5:00 PM'),
-                                ],
-                              )
-                            ],
-                          ),
-                        )
+                        // //suggested stydey times
+                        // const SizedBox(
+                        //   height: 20,
+                        // ),
+                        // const Text(
+                        //   'Suggested Study Times',
+                        //   style: commonTextStyle,
+                        // ),
+                        // const SizedBox(
+                        //   height: 8,
+                        // ),
+                        // //stydey times
+                        // Container(
+                        //   margin: const EdgeInsets.all(6),
+                        //   padding: const EdgeInsets.all(5),
+                        //   decoration: BoxDecoration(
+                        //       border:
+                        //           Border.all(color: const Color(0xFFe6e6e6))),
+                        //   child: Row(
+                        //     children: [
+                        //       Image.asset(
+                        //         'images/calenderweeklyreport.png',
+                        //         height: 50,
+                        //         width: 60,
+                        //       ),
+                        //       const Column(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           Text(
+                        //             'Today',
+                        //             style: midTextStyle,
+                        //           ),
+                        //           Text('Biology'),
+                        //           Text('4:00 PM - 5:00 PM'),
+                        //         ],
+                        //       )
+                        //     ],
+                        //   ),
+                        // )
                       ],
                     ),
                   ),
