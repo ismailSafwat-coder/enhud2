@@ -17,6 +17,7 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 Box? mybox;
 late double deviceheight;
 late double devicewidth;
+late int currentWeekOffset;
 
 Future<Box?> openHiveBox(String boxname) async {
   if (!Hive.isBoxOpen(boxname)) {

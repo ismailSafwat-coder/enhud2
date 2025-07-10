@@ -45,13 +45,13 @@ class _TodayscheduleState extends State<Todayschedule> {
 
       // Map column index to weekday
       Map<int, int> columnToWeekday = {
-        1: 6, // Saturday
-        2: 7, // Sunday
-        3: 1, // Monday
-        4: 2, // Tuesday
-        5: 3, // Wednesday
-        6: 4, // Thursday
-        7: 5, // Friday
+        1: 1, // Saturday
+        2: 2, // Sunday
+        3: 3, // Monday
+        4: 4, // Tuesday
+        5: 5, // Wednesday
+        6: 6, // Thursday
+        7: 7, // Friday
       };
 
       todayNotifications = notificationItemMap.where((item) {
@@ -60,14 +60,14 @@ class _TodayscheduleState extends State<Todayschedule> {
         print(
             'Item week: ${item['week']}, currentWeekOffset: $currentWeekOffset');
         print(
-            'Item column: ${item['column']}, mapped to weekday: ${columnToWeekday[item['column']]}');
+            'Item column: ${item['column']}, mapped to weekday: ${columnToWeekday[today]}');
 
         // Check if the notification is for the current week
         bool isCurrentWeek = item['week'] == currentWeekOffset;
 
         // Check if the column matches today's weekday
         int column = item['column'] ?? 0;
-        bool isToday = columnToWeekday[column] == today;
+        bool isToday = columnToWeekday[today] == column;
 
         print('Is current week: $isCurrentWeek, Is today: $isToday');
 
@@ -76,6 +76,8 @@ class _TodayscheduleState extends State<Todayschedule> {
 
       print('Filtered todayNotifications: $todayNotifications');
     } else {
+      print(
+          '=============================================================== else stefjsdlkafjksdjflksdjfl=====');
       notificationItemMap = [];
       todayNotifications = [];
     }

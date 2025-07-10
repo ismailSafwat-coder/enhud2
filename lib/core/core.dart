@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 List<Map<String, dynamic>> notificationItemMap = [];
 String userid = FirebaseAuth.instance.currentUser!.uid;
 List<List<List<Widget>>> allWeeksContent = [];
-int currentWeekOffset = 0;
+
 List<String> timeSlots = [
   '08:00 am - 09:00 am',
   '09:00 am - 10:00 am',
