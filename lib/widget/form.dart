@@ -197,7 +197,7 @@ class _CustomFormState extends State<CustomForm> {
                   String result = await Authservices().signInWithFacebook();
                   if (result == 'success') {
                     Authservices().addUserInfoToFirestore(
-                      emailcontroller.text.trimLeft(),
+                      "not enterted",
                       "not enterted",
                       "not enterd",
                     );
