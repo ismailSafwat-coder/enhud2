@@ -174,7 +174,17 @@ class _HomepageState extends State<Homepage> {
                       border: Border.all(),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: MotivationalMessages())
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Motivational Messages :',
+                            style: commonTextStyle),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        MotivationalMessages(),
+                      ],
+                    ))
               ],
             ),
           ),
