@@ -11,6 +11,8 @@ class Todayschedule extends StatefulWidget {
 }
 
 class _TodayscheduleState extends State<Todayschedule> {
+  List<Map<String, dynamic>> todayNotifications = [];
+
   loaddata() async {
     User currentUser = FirebaseAuth.instance.currentUser!;
 
@@ -20,23 +22,64 @@ class _TodayscheduleState extends State<Todayschedule> {
 
       mybox = await openHiveBox(currentUser.uid);
       print('Hive box is open');
-      var data = mybox!.get('noti');
-
-      if (data is List) {
-        notificationItemMap = List<Map<String, dynamic>>.from(data.map((item) {
-          if (item is Map) {
-            return Map<String, dynamic>.from(item);
-          } else {
-            // يمكنك هنا التعامل مع الحالة الغير متوقعة
-            return {};
-          }
-        }));
-      } else {
-        notificationItemMap = [];
-      }
-      setState(() {});
-      return;
     }
+
+    var data = mybox!.get('noti');
+    print('Retrieved data from Hive: $data');
+
+    if (data is List) {
+      notificationItemMap = List<Map<String, dynamic>>.from(data.map((item) {
+        if (item is Map) {
+          return Map<String, dynamic>.from(item);
+        } else {
+          return {};
+        }
+      }));
+
+      print('Parsed notificationItemMap: $notificationItemMap');
+
+      // Filter notifications for today
+      DateTime now = DateTime.now();
+      int today = now.weekday; // 1 = Monday, 7 = Sunday
+      print('Today is weekday: $today');
+
+      // Map column index to weekday
+      Map<int, int> columnToWeekday = {
+        1: 6, // Saturday
+        2: 7, // Sunday
+        3: 1, // Monday
+        4: 2, // Tuesday
+        5: 3, // Wednesday
+        6: 4, // Thursday
+        7: 5, // Friday
+      };
+
+      todayNotifications = notificationItemMap.where((item) {
+        // Debug prints
+        print('Checking item: $item');
+        print(
+            'Item week: ${item['week']}, currentWeekOffset: $currentWeekOffset');
+        print(
+            'Item column: ${item['column']}, mapped to weekday: ${columnToWeekday[item['column']]}');
+
+        // Check if the notification is for the current week
+        bool isCurrentWeek = item['week'] == currentWeekOffset;
+
+        // Check if the column matches today's weekday
+        int column = item['column'] ?? 0;
+        bool isToday = columnToWeekday[column] == today;
+
+        print('Is current week: $isCurrentWeek, Is today: $isToday');
+
+        return isCurrentWeek && isToday;
+      }).toList();
+
+      print('Filtered todayNotifications: $todayNotifications');
+    } else {
+      notificationItemMap = [];
+      todayNotifications = [];
+    }
+    setState(() {});
   }
 
   @override
@@ -47,56 +90,41 @@ class _TodayscheduleState extends State<Todayschedule> {
 
   @override
   Widget build(BuildContext context) {
-    return notificationItemMap.isEmpty
+    return todayNotifications.isEmpty
         ? const Center(
             child: Text(
-              'there is no schedule today',
+              'There is no schedule today',
               style: midTextStyle,
             ),
           )
         : SizedBox(
             height: deviceheight * 0.37,
             width: double.infinity,
-            child: FutureBuilder(
-              future: openHiveBox('noti'),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return Center(
-                      child: Text('Error: ${snapshot.error.toString()}'));
-                }
-                return Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Today Schedule :',
-                        style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 250,
-                      child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: notificationItemMap.length,
-                          padding: const EdgeInsets.all(16),
-                          itemBuilder: (context, index) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                //text
-                                mycard(notificationItemMap, index),
-                                //listview card
-                              ],
-                            );
-                          }),
-                    ),
-                  ],
-                );
-              },
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Today Schedule :',
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                  ),
+                ),
+                SizedBox(
+                  height: 250,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: todayNotifications.length,
+                      padding: const EdgeInsets.all(16),
+                      itemBuilder: (context, index) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            mycard(todayNotifications, index),
+                          ],
+                        );
+                      }),
+                ),
+              ],
             ),
           );
   }
