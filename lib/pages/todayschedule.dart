@@ -129,6 +129,67 @@ class _TodayscheduleState extends State<Todayschedule> {
           );
   }
 
+  String _getRemainingTime(String scheduledTimeStr) {
+    // Parse the scheduled time (e.g., "09:00 am")
+    TimeOfDay? scheduledTime = _parseTimeString(scheduledTimeStr);
+    if (scheduledTime == null) {
+      return 'Invalid time';
+    }
+
+    // Get current time
+    DateTime now = DateTime.now();
+
+    // Create a DateTime for the scheduled time today
+    DateTime scheduledDateTime = DateTime(
+        now.year, now.month, now.day, scheduledTime.hour, scheduledTime.minute);
+
+    // If the scheduled time is already passed for today
+    if (scheduledDateTime.isBefore(now)) {
+      return '  Passed';
+    }
+
+    // Calculate the difference
+    Duration difference = scheduledDateTime.difference(now);
+
+    // Format the remaining time
+    int hours = difference.inHours;
+    int minutes = difference.inMinutes % 60;
+
+    return '${hours}hrs ${minutes}mins';
+  }
+
+  TimeOfDay? _parseTimeString(String timeStr) {
+    try {
+      // Handle formats like "09:00 am" or "9:00 am"
+      timeStr = timeStr.toLowerCase().trim();
+      bool isPM = timeStr.contains('pm');
+
+      // Remove am/pm and trim
+      timeStr = timeStr.replaceAll('am', '').replaceAll('pm', '').trim();
+
+      // Split hours and minutes
+      List<String> parts = timeStr.split(':');
+      if (parts.length != 2) return null;
+
+      int hour = int.parse(parts[0]);
+      int minute = int.parse(parts[1]);
+
+      // Convert to 24-hour format if PM
+      if (isPM && hour < 12) {
+        hour += 12;
+      }
+      // Convert 12 AM to 0
+      if (!isPM && hour == 12) {
+        hour = 0;
+      }
+
+      return TimeOfDay(hour: hour, minute: minute);
+    } catch (e) {
+      print('Error parsing time: $e');
+      return null;
+    }
+  }
+
   SizedBox mycard(List<Map<String, dynamic>> noti, int index) {
     return SizedBox(
         height: deviceheight * 0.25,
@@ -154,9 +215,10 @@ class _TodayscheduleState extends State<Todayschedule> {
                     Row(
                       children: [
                         Image.asset('images/timer.png'),
-                        const Text(
-                          ' 0hrs 30mins',
-                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        Text(
+                          _getRemainingTime(noti[index]['time']),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 18),
                         )
                       ],
                     )
