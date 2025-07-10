@@ -87,6 +87,10 @@ class _StudyTimetableState extends State<StudyTimetable> {
   }
 
   String _getWeekTitle() {
+    //open box if not open
+    if (mybox == null || !mybox!.isOpen) {
+      return 'Current Week'; // Default if box isn't available
+    }
     // Get the current weeksPassed value
     int startDateMillis = mybox!.get('weekStartDate');
     DateTime startDate = DateTime.fromMillisecondsSinceEpoch(startDateMillis);
@@ -277,8 +281,14 @@ class _StudyTimetableState extends State<StudyTimetable> {
       // Show confirmation
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(
-                'تم جدولة الإشعار ليوم ${_getDayName(colIndex)} عند $rawTime')),
+          content: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Text(
+              'تم اضافته يوم ${_getDayName(colIndex)} الساعه: $rawTime',
+              style: const TextStyle(fontFamily: 'Cairo'),
+            ),
+          ),
+        ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
