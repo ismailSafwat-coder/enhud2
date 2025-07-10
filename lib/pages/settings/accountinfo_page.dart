@@ -133,17 +133,44 @@ class _AccountinfoPageState extends State<AccountinfoPage> {
                   context: context,
                   builder: (context) => AlertDialog(
                     title: const Text('Update'),
-                    content: TextField(
-                      controller: update,
-                      decoration: const InputDecoration(
-                        hintText: 'Enter new value',
-                        hintStyle: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
+                    content: name == 'gender'
+                        ? StatefulBuilder(
+                            builder: (context, setState) {
+                              String selectedGender =
+                                  update.text.isEmpty ? 'male' : update.text;
+                              return DropdownButton<String>(
+                                value: selectedGender,
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    setState(() {
+                                      selectedGender = value;
+                                      update.text = value;
+                                    });
+                                  }
+                                },
+                                items: const [
+                                  DropdownMenuItem(
+                                      value: 'male', child: Text('Male')),
+                                  DropdownMenuItem(
+                                      value: 'female', child: Text('Female')),
+                                ],
+                              );
+                            },
+                          )
+                        : TextField(
+                            keyboardType: name == 'academicYear'
+                                ? TextInputType.number
+                                : TextInputType.text,
+                            controller: update,
+                            decoration: const InputDecoration(
+                              hintText: 'Enter new value',
+                              hintStyle: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
                     actions: [
                       TextButton(
                         onPressed: () {
@@ -153,13 +180,11 @@ class _AccountinfoPageState extends State<AccountinfoPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          if (update.text.isEmpty) {
-                          } else {
+                          if (update.text.isNotEmpty) {
                             Authservices().updatevalue(name, update.text);
                             update.clear();
                             setState(() {});
                           }
-
                           Navigator.of(context).pop();
                         },
                         child: const Text('Update'),
