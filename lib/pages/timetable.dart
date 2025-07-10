@@ -69,26 +69,38 @@ class _StudyTimetableState extends State<StudyTimetable> {
       if (currentWeekOffset < 0) {
         currentWeekOffset = 0; // Don't go before week 0
       }
+      // Save to Hive
+      if (mybox != null && mybox!.isOpen) {
+        mybox!.put('currentWeekOffset', currentWeekOffset);
+      }
     });
   }
 
   void _goToNextWeek() {
     setState(() {
       currentWeekOffset++;
+      // Save to Hive
+      if (mybox != null && mybox!.isOpen) {
+        mybox!.put('currentWeekOffset', currentWeekOffset);
+      }
     });
   }
 
   String _getWeekTitle() {
-    if (currentWeekOffset == 0) {
+    // Get the current weeksPassed value
+    int startDateMillis = mybox!.get('weekStartDate');
+    DateTime startDate = DateTime.fromMillisecondsSinceEpoch(startDateMillis);
+    DateTime now = DateTime.now();
+    int weeksPassed = now.difference(startDate).inDays ~/ 7;
+
+    if (currentWeekOffset == weeksPassed) {
       return 'Current Week';
-    } else if (currentWeekOffset == 1) {
-      return 'Next Week';
-    } else if (currentWeekOffset == -1) {
-      return 'Last Week';
-    } else if (currentWeekOffset > 1) {
-      return 'In $currentWeekOffset Weeks';
+    } else if (currentWeekOffset > weeksPassed) {
+      int weeksAhead = currentWeekOffset - weeksPassed;
+      return '$weeksAhead ${weeksAhead == 1 ? 'Week' : 'Weeks'} Ahead';
     } else {
-      return '${-currentWeekOffset} Weeks Ago';
+      int weeksAgo = weeksPassed - currentWeekOffset;
+      return '$weeksAgo ${weeksAgo == 1 ? 'Week' : 'Weeks'} Ago';
     }
   }
 
@@ -283,15 +295,24 @@ class _StudyTimetableState extends State<StudyTimetable> {
       }
 
       // 2. جلب البيانات الحالية أو إنشاء قائمة جديدة إذا لم تكن موجودة
-      List<Map<String, dynamic>> currentList = mybox!.containsKey('noti')
-          ? List.from(mybox!.get('noti')) // إنشاء نسخة جديدة من القائمة
-          : [];
+      List<dynamic> currentList = [];
+      if (mybox!.containsKey('noti')) {
+        var storedData = mybox!.get('noti');
+        if (storedData is List) {
+          currentList = storedData;
+        }
+      }
 
       // 3. إضافة البيانات الجديدة
       currentList.add(newData);
 
       // 4. حفظ القائمة المحدثة
       await mybox!.put('noti', currentList);
+
+      // 5. Also update the week tracking data
+      await mybox!
+          .put('lastUpdateTimestamp', DateTime.now().millisecondsSinceEpoch);
+      await mybox!.put('currentWeekOffset', currentWeekOffset);
 
       print('تم تخزين البيانات بنجاح: $newData');
     } catch (e) {
@@ -339,6 +360,7 @@ class _StudyTimetableState extends State<StudyTimetable> {
     _initNotifications();
     _initializeWeeksContent();
     _loadCurrentWeekOffset();
+    _checkAndUpdateWeekOffset(); // Add this line to check for week changes
   }
 
   Future<void> _loadCurrentWeekOffset() async {
@@ -348,6 +370,39 @@ class _StudyTimetableState extends State<StudyTimetable> {
       setState(() {
         currentWeekOffset = mybox!.get('currentWeekOffset');
       });
+    }
+  }
+
+  Future<void> _checkAndUpdateWeekOffset() async {
+    if (mybox != null && mybox!.isOpen) {
+      // Get the last update timestamp
+      if (mybox!.containsKey('lastUpdateTimestamp')) {
+        int lastUpdateTimestamp = mybox!.get('lastUpdateTimestamp');
+        DateTime lastUpdate =
+            DateTime.fromMillisecondsSinceEpoch(lastUpdateTimestamp);
+        DateTime now = DateTime.now();
+
+        // Calculate weeks passed since last update
+        int daysPassed = now.difference(lastUpdate).inDays;
+        int weeksPassed = daysPassed ~/ 7;
+
+        if (weeksPassed > 0) {
+          // Update currentWeekOffset
+          setState(() {
+            currentWeekOffset += weeksPassed;
+            print('Weeks passed: $weeksPassed, new offset: $currentWeekOffset');
+          });
+
+          // Store new values in Hive
+          await mybox!.put('currentWeekOffset', currentWeekOffset);
+          await mybox!.put('lastUpdateTimestamp', now.millisecondsSinceEpoch);
+        }
+      } else {
+        // First time storing timestamp
+        await mybox!
+            .put('lastUpdateTimestamp', DateTime.now().millisecondsSinceEpoch);
+        await mybox!.put('currentWeekOffset', currentWeekOffset);
+      }
     }
   }
 
