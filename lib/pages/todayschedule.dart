@@ -1,5 +1,6 @@
 import 'package:enhud/core/core.dart';
 import 'package:enhud/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Todayschedule extends StatefulWidget {
@@ -10,9 +11,38 @@ class Todayschedule extends StatefulWidget {
 }
 
 class _TodayscheduleState extends State<Todayschedule> {
+  loaddata() async {
+    User currentUser = FirebaseAuth.instance.currentUser!;
+
+    if (mybox == null || !mybox!.isOpen) {
+      print('Hive box is not open');
+      //open hive box
+
+      mybox = await openHiveBox(currentUser.uid);
+      print('Hive box is open');
+      var data = mybox!.get('noti');
+
+      if (data is List) {
+        notificationItemMap = List<Map<String, dynamic>>.from(data.map((item) {
+          if (item is Map) {
+            return Map<String, dynamic>.from(item);
+          } else {
+            // يمكنك هنا التعامل مع الحالة الغير متوقعة
+            return {};
+          }
+        }));
+      } else {
+        notificationItemMap = [];
+      }
+      setState(() {});
+      return;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    loaddata();
   }
 
   @override

@@ -6,10 +6,6 @@ import 'package:enhud/pages/notifications/notifications.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-
-import 'screens/0_generation_home_screen.dart';
-import 'utils/app_colors.dart';
-
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -57,7 +53,7 @@ void main() async {
     print('-------------User is signed in!');
     print('====================${currentUser.uid}');
     // Open Hive box for current user
-    // mybox = await openHiveBox(currentUser.uid);
+    mybox = await openHiveBox(currentUser.uid);
   } else {
     print('-------------No user signed in');
   }
@@ -159,4 +155,5 @@ class _MyAppState extends State<MyApp> {
 //     );
 //   }
 // }
+
 

@@ -72,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Then proceed with your existing code, with additional null checks
     if (mybox != null && mybox!.isOpen) {
+      // Your existing code
       if (!mybox!.isOpen || !mybox!.containsKey('timeSlots')) return;
 
       final List<String> savedSlots = mybox!.get('timeSlots');
