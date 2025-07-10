@@ -338,6 +338,17 @@ class _StudyTimetableState extends State<StudyTimetable> {
     RestartWidget.restartApp(context);
     _initNotifications();
     _initializeWeeksContent();
+    _loadCurrentWeekOffset();
+  }
+
+  Future<void> _loadCurrentWeekOffset() async {
+    if (mybox != null &&
+        mybox!.isOpen &&
+        mybox!.containsKey('currentWeekOffset')) {
+      setState(() {
+        currentWeekOffset = mybox!.get('currentWeekOffset');
+      });
+    }
   }
 
   @override
@@ -360,10 +371,12 @@ class _StudyTimetableState extends State<StudyTimetable> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios),
-              onPressed: _goToPreviousWeek,
-            ),
+            currentWeekOffset == 0
+                ? const SizedBox()
+                : IconButton(
+                    icon: const Icon(Icons.arrow_back_ios),
+                    onPressed: _goToPreviousWeek,
+                  ),
             Text(_getWeekTitle()),
             IconButton(
               icon: const Icon(Icons.arrow_forward_ios),

@@ -1,3 +1,4 @@
+import 'package:enhud/core/core.dart';
 import 'package:enhud/firebase_options.dart';
 
 import 'package:enhud/pages/authpages/loginpage.dart';
@@ -54,6 +55,27 @@ void main() async {
     print('====================${currentUser.uid}');
     // Open Hive box for current user
     mybox = await openHiveBox(currentUser.uid);
+
+    // Check if this is first time opening app (no week tracking data)
+    if (!mybox!.containsKey('weekStartDate')) {
+      // Store initial week data
+      await mybox!.put('weekStartDate', DateTime.now().millisecondsSinceEpoch);
+      await mybox!.put('currentWeekOffset', 0);
+    } else {
+      // Calculate weeks passed since first use
+      int startDateMillis = mybox!.get('weekStartDate');
+      DateTime startDate = DateTime.fromMillisecondsSinceEpoch(startDateMillis);
+      DateTime now = DateTime.now();
+
+      // Calculate difference in weeks (integer division)
+      int weeksPassed = now.difference(startDate).inDays ~/ 7;
+
+      // Update the current week offset
+      await mybox!.put('currentWeekOffset', weeksPassed);
+    }
+
+    // Set the global currentWeekOffset from Hive
+    currentWeekOffset = mybox!.get('currentWeekOffset') ?? 0;
   } else {
     print('-------------No user signed in');
   }
@@ -155,5 +177,6 @@ class _MyAppState extends State<MyApp> {
 //     );
 //   }
 // }
+
 
 
