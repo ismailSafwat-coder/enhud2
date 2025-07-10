@@ -8,6 +8,7 @@ import 'package:enhud/widget/alertdialog/exam.dart';
 import 'package:enhud/widget/alertdialog/freetime.dart';
 import 'package:enhud/widget/alertdialog/sleep.dart';
 import 'package:enhud/widget/alertdialog/taskdilog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:enhud/core/core.dart';
 
@@ -86,9 +87,14 @@ class _StudyTimetableState extends State<StudyTimetable> {
     });
   }
 
+  openmybox() async {
+    mybox = await openHiveBox(FirebaseAuth.instance.currentUser!.uid);
+  }
+
   String _getWeekTitle() {
     //open box if not open
     if (mybox == null || !mybox!.isOpen) {
+      openmybox();
       return 'Current Week'; // Default if box isn't available
     }
     // Get the current weeksPassed value
