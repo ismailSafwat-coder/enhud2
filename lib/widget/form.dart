@@ -160,6 +160,12 @@ class _CustomFormState extends State<CustomForm> {
               GestureDetector(
                 onTap: () async {
                   String res = await Authservices().signinWithGoogle(context);
+                  // iwant to store user information in firestore
+                  Authservices().addUserInfoToFirestore(
+                    "not enterted",
+                    "not enterted",
+                    "not enterd",
+                  );
                   if (res == 'success') {
                     Navigator.push(
                         context,

@@ -17,9 +17,25 @@ class Authservices {
     return _firebaseAuth.currentUser;
   }
 
+  Future<void> updatevalue(String field, String value) async {
+    try {
+      // Get current authenticated user
+      User? user = FirebaseAuth.instance.currentUser;
+      String uid = user!.uid;
+
+      // Check if user is logged in
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        field: value,
+      });
+    } catch (e) {
+      print("Error saving user data: $e");
+      rethrow;
+    }
+  }
+
   Future<void> addUserInfoToFirestore(
     String? name,
-    String Acdamic,
+    String acdamic,
     String gender,
   ) async {
     try {
@@ -33,7 +49,7 @@ class Authservices {
       await FirebaseFirestore.instance.collection('users').doc(uid).set({
         'uid': uid,
         "gender": gender,
-        'academicYear': Acdamic,
+        'academicYear': acdamic,
         'email': user.email,
         'name': user.displayName ?? name,
         'photoURL': user.photoURL ?? url,

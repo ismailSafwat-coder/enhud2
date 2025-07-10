@@ -76,8 +76,6 @@ class _TodayscheduleState extends State<Todayschedule> {
 
       print('Filtered todayNotifications: $todayNotifications');
     } else {
-      print(
-          '=============================================================== else stefjsdlkafjksdjflksdjfl=====');
       notificationItemMap = [];
       todayNotifications = [];
     }

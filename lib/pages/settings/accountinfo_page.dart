@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:enhud/auth/authservices.dart';
 import 'package:enhud/pages/homescreen.dart';
 import 'package:enhud/widget/custombuttom1.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,8 +15,9 @@ class AccountinfoPage extends StatefulWidget {
 
 class _AccountinfoPageState extends State<AccountinfoPage> {
   bool userstoreinfirestore = true;
-  TextEditingController acadimicyear = TextEditingController();
+  TextEditingController academicYear = TextEditingController();
   TextEditingController gender = TextEditingController();
+  TextEditingController update = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser!;
@@ -92,22 +94,14 @@ class _AccountinfoPageState extends State<AccountinfoPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       buildLabel('Full name'),
-                      buildReadOnlyField(userData['name'], false, null),
+                      buildReadOnlyField(userData['name'], false, 'name'),
                       buildLabel('E-mail'),
-                      buildReadOnlyField(userData['email'], false, null),
+                      buildReadOnlyField(userData['email'], false, 'email'),
                       buildLabel('Academic Year'),
-                      buildReadOnlyField(userData['academicYear'],
-                          userstoreinfirestore, acadimicyear),
-                      buildLabel('Gender'),
                       buildReadOnlyField(
-                          userData['gender'], userstoreinfirestore, gender),
-                      // if (!userstoreinfirestore)
-                      //   Center(
-                      //       child: Custombuttom1(
-                      //           onPressed: () {
-                      //             if (acadimicyear) {}
-                      //           },
-                      //           text: "Update")),
+                          userData['academicYear'], true, 'academicYear'),
+                      buildLabel('Gender'),
+                      buildReadOnlyField(userData['gender'], true, 'gender'),
                     ],
                   ),
                 ),
@@ -128,32 +122,80 @@ class _AccountinfoPageState extends State<AccountinfoPage> {
         ),
       );
 
-  Widget buildReadOnlyField(
-          String value, bool cahcahnge, TextEditingController? controlle) =>
-      SizedBox(
-        width: double.infinity,
-        child: TextFormField(
-          controller: controlle,
-          readOnly: !cahcahnge,
-          decoration: InputDecoration(
-            hintText: value,
-            hintStyle: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-              color: Colors.black,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Color(0xFFededed)),
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
-        ),
+  Widget buildReadOnlyField(String value, bool cahcahnge, String name) =>
+      InkWell(
+        onTap: () {
+          //cool dilog
+          print('istapped');
+
+          cahcahnge
+              ? showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Update'),
+                    content: TextField(
+                      controller: update,
+                      decoration: const InputDecoration(
+                        hintText: 'Enter new value',
+                        hintStyle: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          if (update.text.isEmpty) {
+                          } else {
+                            Authservices().updatevalue(name, update.text);
+                            update.clear();
+                            setState(() {});
+                          }
+
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Update'),
+                      ),
+                    ],
+                  ),
+                )
+              : null;
+        },
+        child: SizedBox(
+            width: double.infinity,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                border: Border.all(color: const Color(0xFFededed)),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                ),
+              ),
+            )),
       );
 
   Container bottmbar(BuildContext context) {
     return Container(
       height: 60,
-      color: const Color(0xFFd9d9d9),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+          border: Border.all(color: const Color(0xFFbfbfbf)),
+          borderRadius: BorderRadius.circular(20)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
