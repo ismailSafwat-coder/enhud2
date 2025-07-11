@@ -1,8 +1,7 @@
-import 'package:enhud/main.dart';
 import 'package:enhud/widget/studytabletextform.dart';
 import 'package:flutter/material.dart';
 
-class StudyDialog extends StatelessWidget {
+class MaterilDilog extends StatelessWidget {
   final GlobalKey<FormState> formKey;
 
   final TextEditingController taskController;
@@ -10,7 +9,7 @@ class StudyDialog extends StatelessWidget {
   final TextEditingController chapter;
 
   final String type;
-  const StudyDialog(
+  const MaterilDilog(
       {super.key,
       required this.formKey,
       required this.taskController,
@@ -31,10 +30,7 @@ class StudyDialog extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Text(
-                  'Material',
-                  style: commonTextStyle,
-                ),
+                Text('$type Title'),
                 const SizedBox(
                   width: 10,
                 ),
@@ -47,7 +43,7 @@ class StudyDialog extends StatelessWidget {
             const SizedBox(height: 10),
             Row(
               children: [
-                const Text('unit', style: commonTextStyle),
+                const Text('Description'),
                 const SizedBox(
                   width: 10,
                 ),
@@ -59,7 +55,7 @@ class StudyDialog extends StatelessWidget {
             const SizedBox(height: 10),
             Row(
               children: [
-                const Text('description', style: commonTextStyle),
+                const Text('enter chpter '),
                 const SizedBox(
                   width: 10,
                 ),

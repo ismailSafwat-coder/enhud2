@@ -99,13 +99,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
     // Map column to weekday (1-7)
     Map<int, int> columnToWeekday = {
-      1: 1, // Monday
-      2: 2, // Tuesday
-      3: 3, // Wednesday
-      4: 4, // Thursday
-      5: 5, // Friday
-      6: 6, // Saturday
-      7: 7, // Sunday
+      1: 3, // Saturday
+      2: 4, // Sunday
+      3: 5, // Monday
+      4: 6, // Tuesday
+      5: 7, // Wednesday
+      6: 2, // Thursday
+      7: 1, // Friday
     };
 
     int targetWeekday = columnToWeekday[column] ?? now.weekday;

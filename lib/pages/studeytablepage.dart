@@ -30,7 +30,7 @@ class _StudeytablepageState extends State<Studeytablepage> {
   final List<String> categories = [
     "Material",
     "Task",
-    "Assignment",
+    "StudyDialog",
     "Exam",
     "Activity",
     "sleep",
@@ -75,7 +75,7 @@ class _StudeytablepageState extends State<Studeytablepage> {
   Color _getCategoryColor(String category) {
     switch (category) {
       case 'Task':
-      case 'Assignment':
+      case 'StudyDialog':
         return const Color(0xffffa45b);
       case 'Exam':
         return const Color(0xffff6b6b);
@@ -162,7 +162,7 @@ class _StudeytablepageState extends State<Studeytablepage> {
                     width: height * 0.02,
                   ),
                   const Text(
-                    ' Assignment / Task',
+                    ' StudyDialog / Task',
                     style: TextStyle(fontSize: 12),
                   )
                 ],

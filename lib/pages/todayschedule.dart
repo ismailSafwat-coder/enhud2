@@ -25,7 +25,7 @@ class _TodayscheduleState extends State<Todayschedule> {
     }
 
     var data = mybox!.get('noti');
-    print('Retrieved data from Hive: $data');
+    // print('Retrieved data from Hive: $data');
 
     if (data is List) {
       notificationItemMap = List<Map<String, dynamic>>.from(data.map((item) {
@@ -36,31 +36,31 @@ class _TodayscheduleState extends State<Todayschedule> {
         }
       }));
 
-      print('Parsed notificationItemMap: $notificationItemMap');
+      // print('Parsed notificationItemMap: $notificationItemMap');
 
       // Filter notifications for today
       DateTime now = DateTime.now();
       int today = now.weekday; // 1 = Monday, 7 = Sunday
-      print('Today is weekday: $today');
+      // print('Today is weekday: $today');
 
       // Map column index to weekday
       Map<int, int> columnToWeekday = {
-        1: 1, // Saturday
-        2: 2, // Sunday
-        3: 3, // Monday
-        4: 4, // Tuesday
-        5: 5, // Wednesday
-        6: 6, // Thursday
-        7: 7, // Friday
+        1: 3, // Saturday
+        2: 4, // Sunday
+        3: 5, // Monday
+        4: 6, // Tuesday
+        5: 7, // Wednesday
+        6: 2, // Thursday
+        7: 1, // Friday
       };
 
       todayNotifications = notificationItemMap.where((item) {
         // Debug prints
-        print('Checking item: $item');
-        print(
-            'Item week: ${item['week']}, currentWeekOffset: $currentWeekOffset');
-        print(
-            'Item column: ${item['column']}, mapped to weekday: ${columnToWeekday[today]}');
+        // print('Checking item: $item');
+        // print(
+        //     'Item week: ${item['week']}, currentWeekOffset: $currentWeekOffset');
+        // print(
+        //     'Item column: ${item['column']}, mapped to weekday: ${columnToWeekday[today]}');
 
         // Check if the notification is for the current week
         bool isCurrentWeek = item['week'] == currentWeekOffset;
@@ -69,12 +69,12 @@ class _TodayscheduleState extends State<Todayschedule> {
         int column = item['column'] ?? 0;
         bool isToday = columnToWeekday[today] == column;
 
-        print('Is current week: $isCurrentWeek, Is today: $isToday');
+        // print('Is current week: $isCurrentWeek, Is today: $isToday');
 
         return isCurrentWeek && isToday;
       }).toList();
 
-      print('Filtered todayNotifications: $todayNotifications');
+      // print('Filtered todayNotifications: $todayNotifications');
     } else {
       notificationItemMap = [];
       todayNotifications = [];

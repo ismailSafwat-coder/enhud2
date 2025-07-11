@@ -4,6 +4,7 @@ import 'package:enhud/firebase_options.dart';
 import 'package:enhud/pages/authpages/loginpage.dart';
 import 'package:enhud/pages/homescreen.dart';
 import 'package:enhud/pages/notifications/notifications.dart';
+import 'package:enhud/test/mytime.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -116,14 +117,16 @@ class _MyAppState extends State<MyApp> {
           scaffoldBackgroundColor: Colors.white,
           useMaterial3: true,
         ),
-        home: AnimatedSplashScreen(
-            duration: 7000,
-            centered: true,
-            splashIconSize: 5000,
-            splash: "images/enhudintro-ezgif.com-resize.gif",
-            nextScreen: FirebaseAuth.instance.currentUser != null
-                ? const HomeScreen()
-                : const LoginPage())
+        home: //
+            // const Mytime(),
+            AnimatedSplashScreen(
+                duration: 7000,
+                centered: true,
+                splashIconSize: 5000,
+                splash: "images/enhudintro-ezgif.com-resize.gif",
+                nextScreen: FirebaseAuth.instance.currentUser != null
+                    ? const HomeScreen()
+                    : const LoginPage())
 
         // const HiveTestPage(),
         );

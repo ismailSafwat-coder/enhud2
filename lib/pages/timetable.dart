@@ -6,6 +6,7 @@ import 'package:enhud/widget/alertdialog/anthorclass.dart';
 import 'package:enhud/widget/alertdialog/assginmentdialog.dart';
 import 'package:enhud/widget/alertdialog/exam.dart';
 import 'package:enhud/widget/alertdialog/freetime.dart';
+import 'package:enhud/widget/alertdialog/materil.dart';
 import 'package:enhud/widget/alertdialog/sleep.dart';
 import 'package:enhud/widget/alertdialog/taskdilog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,7 +33,7 @@ class _StudyTimetableState extends State<StudyTimetable> {
   final List<String> categories = [
     "Material",
     "Task",
-    "Assignment",
+    "Study",
     "Exam",
     "Activity",
     "sleep",
@@ -284,6 +285,8 @@ class _StudyTimetableState extends State<StudyTimetable> {
 
     if (parsedTime != null) {
       // Schedule the notification using week, row, column format
+      print(
+          'time is before scudel is = ${parsedTime.hour} ${parsedTime.minute}');
       await Notifications().scheduleNotification(
         week: currentWeekOffset,
         row: rowIndex,
@@ -676,7 +679,8 @@ class _StudyTimetableState extends State<StudyTimetable> {
   void _showAddItemDialog(int rowIndex, int colIndex) {
     String? selectedCategory;
     TextEditingController taskController = TextEditingController();
-    TextEditingController Descriptioncontroller = TextEditingController();
+    TextEditingController descriptioncontroller = TextEditingController();
+    TextEditingController chapter = TextEditingController(text: 'not entered');
 
     showDialog(
       context: context,
@@ -760,42 +764,44 @@ class _StudyTimetableState extends State<StudyTimetable> {
                         priority: _priority,
                         formKey: _formKey,
                         taskController: taskController,
-                        Descriptioncontroller: Descriptioncontroller,
+                        Descriptioncontroller: descriptioncontroller,
                         onPriorityChanged: (value) {
                           setDialogState(() => _priority = value!);
                         })
-                  ] else if (selectedCategory == 'Assignment') ...[
-                    AssignmentDialog(
-                      type: 'Assignment',
+                  ] else if (selectedCategory == 'Study') ...[
+                    StudyDialog(
+                      type: 'Study',
                       formKey: _formKey,
+                      chapter: chapter,
                       taskController: taskController,
-                      Descriptioncontroller: Descriptioncontroller,
+                      descriptioncontroller: descriptioncontroller,
                     )
                   ] else if (selectedCategory == 'Activity') ...[
                     ActivityDialog(
                       type: 'Activity',
                       formKey: _formKey,
                       taskController: taskController,
-                      Descriptioncontroller: Descriptioncontroller,
+                      Descriptioncontroller: descriptioncontroller,
                     )
                   ] else if (selectedCategory == 'Material') ...[
-                    AssignmentDialog(
+                    MaterilDilog(
                       type: 'Material',
+                      chapter: chapter,
                       formKey: _formKey,
                       taskController: taskController,
-                      Descriptioncontroller: Descriptioncontroller,
+                      descriptioncontroller: descriptioncontroller,
                     )
                   ] else if (selectedCategory == 'Exam') ...[
                     ExamDialog(
                       type: 'Exam',
                       formKey: _formKey,
                       taskController: taskController,
-                      Descriptioncontroller: Descriptioncontroller,
+                      Descriptioncontroller: descriptioncontroller,
                     )
                   ] else if (selectedCategory == 'Another Class') ...[
                     Anthorclass(
                       taskController: taskController,
-                      Descriptioncontroller: Descriptioncontroller,
+                      Descriptioncontroller: descriptioncontroller,
                     )
                   ] else if (selectedCategory == 'sleep') ...[
                     const Sleep()
@@ -819,7 +825,7 @@ class _StudyTimetableState extends State<StudyTimetable> {
                             timeSlots[rowIndex],
                             context,
                             taskController.text,
-                            Descriptioncontroller.text,
+                            descriptioncontroller.text,
                             rowIndex: rowIndex,
                             colIndex: colIndex,
                           );
@@ -832,12 +838,17 @@ class _StudyTimetableState extends State<StudyTimetable> {
                             "row": rowIndex,
                             'column': colIndex,
                             "title": taskController.text.trim(),
-                            "description": Descriptioncontroller.text.trim(),
+                            "description": descriptioncontroller.text.trim(),
                             "category": selectedCategory,
                             "done": false,
                             "time": _extractFirstTime(timeSlots[rowIndex]),
                             "priority":
                                 selectedCategory == 'Task' ? _priority : null,
+                            'chapter': selectedCategory == 'Study'
+                                ? chapter.text.trim() ?? 'notentered'
+                                : selectedCategory == 'Material'
+                                    ? chapter.text.trim()
+                                    : '',
                           };
                           storeEoHive(notificationInfotoStore);
                           // Update the current week's content
@@ -848,7 +859,7 @@ class _StudyTimetableState extends State<StudyTimetable> {
                             width: double.infinity,
                             color: selectedCategory == 'Task'
                                 ? const Color(0xffffa45b)
-                                : selectedCategory == 'Assignment'
+                                : selectedCategory == 'Study'
                                     ? const Color(0xffffa45b)
                                     : selectedCategory == 'Exam'
                                         ? const Color(0xffff6b6b)
@@ -857,7 +868,7 @@ class _StudyTimetableState extends State<StudyTimetable> {
                                             : selectedCategory == 'Activity'
                                                 ? const Color(0xffffe66d)
                                                 : const Color(0xff9bb7fa),
-                            child: Descriptioncontroller.text.isEmpty
+                            child: descriptioncontroller.text.isEmpty
                                 ? Center(
                                     child: Text(
                                       taskController.text,
@@ -882,7 +893,7 @@ class _StudyTimetableState extends State<StudyTimetable> {
                                           Text(
                                             textAlign: TextAlign.center,
                                             overflow: TextOverflow.ellipsis,
-                                            Descriptioncontroller.text,
+                                            descriptioncontroller.text,
                                             maxLines: 3,
                                             style: const TextStyle(
                                                 color: Colors.white,
@@ -894,7 +905,7 @@ class _StudyTimetableState extends State<StudyTimetable> {
                                   ),
                           );
                         } else if (taskController.text.isEmpty &&
-                            Descriptioncontroller.text.isEmpty) {
+                            descriptioncontroller.text.isEmpty) {
                           showDialog(
                             context: context,
                             builder: (context) => const AlertDialog(
